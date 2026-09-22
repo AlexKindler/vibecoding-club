@@ -1,0 +1,20 @@
+# Runs the data checker on every pull request and on every push to main.
+# The job name "check-data" is the required status check in branch protection,
+# so do not rename it without also updating the branch protection rule.
+name: Check data
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check-data:
+    name: check-data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: node scripts/check-data.js

@@ -1,0 +1,24 @@
+{
+  "_help": "Names are first name + last initial ('Ava K.') or a handle ('pixelwiz'). Never full names, never emails. Never type a rank: the site sorts by points, and ties share a rank. Keep members alphabetical so two people's edits land on different lines. Badge colors: sun, tangerine, mint, coral, sky, grape. Every change to this file needs a club leader's approval. The four members below are famous computer scientists, not students: delete them before launch.",
+  "updated": "2026-09-22",
+  "howToEarn": [
+    { "category": "attend",    "what": "Come to a meeting",                    "points": 10 },
+    { "category": "demo",      "what": "Demo your project on a Work Day",      "points": 25 },
+    { "category": "site",      "what": "Merge a pull request to this website", "points": 50 },
+    { "category": "hackathon", "what": "Blooket Hackathon: 3rd place",         "points": 100 },
+    { "category": "hackathon", "what": "Blooket Hackathon: 2nd place",         "points": 150 },
+    { "category": "hackathon", "what": "Blooket Hackathon: 1st place",         "points": 250 }
+  ],
+  "badges": {
+    "builder":   { "label": "Site Builder", "color": "sky",   "how": "Merged a pull request to this site" },
+    "demo":      { "label": "Demo Star",    "color": "sun",   "how": "Demoed on a Work Day" },
+    "streak":    { "label": "Streak",       "color": "mint",  "how": "Four meetings in a row" },
+    "hackathon": { "label": "Hackathon",    "color": "grape", "how": "Placed in the Blooket Hackathon" }
+  },
+  "members": [
+    { "name": "Ada L.",   "points": 85, "badges": ["builder", "demo"] },
+    { "name": "Alan T.",  "points": 60, "badges": ["demo"] },
+    { "name": "Grace H.", "points": 60, "badges": [] },
+    { "name": "hopper42", "points": 35, "badges": ["builder"] }
+  ]
+}

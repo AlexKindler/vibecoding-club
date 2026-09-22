@@ -1,0 +1,10 @@
+{
+  "_help": "Links for the Info page, shown in this order. Copy a line, paste it where you want it, change the words. url must start with https://. Keep the blurb to one sentence. tag is a short word shown as a pill.",
+  "resources": [
+    { "title": "GitHub Skills: Introduction to GitHub", "url": "https://skills.github.com", "blurb": "A free click-through course on branches and pull requests.", "tag": "Learn" },
+    { "title": "MDN: Learn web development", "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development", "blurb": "What every tag on this site means, with beginner paths.", "tag": "Learn" },
+    { "title": "GitHub Copilot", "url": "https://github.com/features/copilot", "blurb": "AI help inside VS Code, free for verified students.", "tag": "AI tool" },
+    { "title": "Claude Code", "url": "https://code.claude.com/docs", "blurb": "An AI coding tool that works in the terminal and in VS Code.", "tag": "AI tool" },
+    { "title": "Our GitHub repo", "url": "https://github.com/AlexKindler/vibecoding-club", "blurb": "Where this site lives. Open an issue or a pull request.", "tag": "This site" }
+  ]
+}

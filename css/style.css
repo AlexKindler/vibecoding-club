@@ -1,0 +1,287 @@
+/* ==========================================================================
+   VibeCoding Club — the ONE shared stylesheet.
+
+   Rules of the house (so nobody has to do color math):
+   - Bright hues (sun, tangerine, mint, coral, silver, bronze) are BACKGROUNDS
+     with ink text. Only sky and grape carry white text.
+   - Styling that belongs to a single page goes in a <style> block at the top
+     of that page's HTML, not here. This file is shared by every page.
+   - Only transform and opacity animate. Reduced motion is handled at the end.
+
+   Contrast (WCAG AA needs 4.5:1 for text). Computed, not guessed:
+     ink on paper 15.7   ink on card 16.0   muted on paper 7.8
+     ink on sun 11.3     ink on tangerine 6.8   ink on mint 8.3   ink on coral 5.8
+     ink on silver 11.8  ink on bronze 7.7
+     white on sky 5.9    white on grape 7.1     sky on paper 5.8   grape on paper 7.0
+   ========================================================================== */
+
+:root {
+  --ink: #1E1B4B;
+  --paper: #FFFDF7;
+  --card: #FFFFFF;
+  --line: #E4E0D4;
+  --muted: #4F4C78;
+
+  --sun: #FFD53D;
+  --tangerine: #FF8A00;
+  --mint: #34D399;
+  --coral: #FF6B6B;
+  --sky: #2A5BD7;
+  --grape: #6D28D9;
+  --silver: #D7DEE8;
+  --bronze: #E8A76B;
+
+  --radius: 22px;
+  --radius-sm: 12px;
+  --border: 3px solid var(--ink);
+  --shadow: 0 6px 0 rgba(30, 27, 75, 0.14);
+  --shadow-press: 0 2px 0 rgba(30, 27, 75, 0.14);
+
+  --font-display: "Fredoka", "Arial Rounded MT Bold", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --tab-bar-height: 64px;
+  --max-width: 960px;
+}
+
+/* Self-hosted so the site makes zero external requests (school Wi-Fi safe).
+   License: fonts/OFL.txt */
+@font-face {
+  font-family: "Fredoka";
+  src: url("../fonts/Fredoka.woff2") format("woff2");
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ---------- base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  /* room for the phone tab bar; removed at desktop sizes below */
+  padding-bottom: calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px));
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 0.4em;
+}
+h1 { font-size: clamp(2.3rem, 9vw, 3.8rem); font-weight: 700; }
+h2 { font-size: clamp(1.5rem, 5.5vw, 2.1rem); }
+h3 { font-size: 1.25rem; }
+p { margin: 0 0 1em; }
+a { color: var(--sky); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--grape); }
+img, svg { max-width: 100%; height: auto; }
+code { font-family: var(--font-mono); font-size: 0.92em; background: var(--silver); padding: 0.1em 0.35em; border-radius: 6px; }
+ul, ol { padding-left: 1.3em; }
+
+:focus-visible { outline: 4px solid var(--sky); outline-offset: 3px; border-radius: var(--radius-sm); }
+
+.visually-hidden {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute; left: -999px; top: 8px; z-index: 100;
+  background: var(--ink); color: #fff; padding: 0.6rem 1rem; border-radius: 999px; font-weight: 600;
+}
+.skip-link:focus { left: 8px; }
+
+main { max-width: var(--max-width); margin: 0 auto; padding: 1rem 1rem 2rem; }
+section + section { margin-top: 1.5rem; }
+
+.muted { color: var(--muted); }
+.eyebrow {
+  font-family: var(--font-display); font-weight: 600; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0 0 0.3rem;
+}
+.center { text-align: center; }
+
+/* ---------- header (drawn by js/shared.js) ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  background: var(--paper); border-bottom: var(--border);
+}
+.site-header .inner {
+  display: flex; align-items: center; gap: 0.75rem;
+  max-width: var(--max-width); margin: 0 auto; padding: 0.6rem 1rem;
+}
+.brand {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-display); font-weight: 700; font-size: 1.2rem;
+  color: var(--ink); text-decoration: none; white-space: nowrap;
+}
+.brand:hover { color: var(--ink); }
+.brand img { width: 36px; height: 36px; }
+.brand:hover img { animation: wiggle 0.5s ease-in-out; }
+.top-nav { display: none; gap: 0.2rem; margin-left: auto; }
+.top-nav a {
+  padding: 0.45rem 0.85rem; border-radius: 999px; text-decoration: none;
+  color: var(--ink); font-family: var(--font-display); font-weight: 600;
+}
+.top-nav a:hover { background: var(--silver); color: var(--ink); }
+.top-nav a[aria-current="page"] { background: var(--sun); }
+.header-join { margin-left: auto; font-size: 0.95rem; padding: 0.55rem 1rem; }
+
+/* ---------- phone tab bar (drawn by js/shared.js) ---------- */
+.tab-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+  display: flex; background: var(--card); border-top: var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.tab-bar a {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: var(--tab-bar-height); padding: 0.35rem 0.2rem;
+  font-family: var(--font-display); font-size: 0.75rem; font-weight: 600;
+  color: var(--ink); text-decoration: none;
+}
+.tab-bar a:hover { color: var(--ink); }
+.tab-icon {
+  display: grid; place-items: center; width: 44px; height: 28px;
+  border-radius: 999px; font-size: 1.25rem; line-height: 1;
+  transition: transform 0.15s ease;
+}
+.tab-bar a:active .tab-icon { transform: scale(0.9); }
+.tab-bar a[aria-current="page"] { color: var(--grape); }
+.tab-bar a[aria-current="page"] .tab-icon { background: var(--sun); }
+
+@media (min-width: 700px) {
+  body { padding-bottom: 0; }
+  .tab-bar { display: none; }
+  .top-nav { display: flex; }
+  .header-join { margin-left: 0.5rem; }
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; line-height: 1.2;
+  padding: 0.75rem 1.4rem; border-radius: 999px; border: var(--border);
+  background: var(--sun); color: var(--ink); text-decoration: none; cursor: pointer;
+  box-shadow: var(--shadow); white-space: nowrap;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.btn:hover { color: var(--ink); transform: translateY(-2px); }
+.btn:active { transform: translateY(3px); box-shadow: var(--shadow-press); }
+.btn-big { font-size: 1.35rem; padding: 0.95rem 1.9rem; white-space: normal; max-width: 100%; text-align: center; }
+.btn-grape { background: var(--grape); color: #fff; }
+.btn-grape:hover { color: #fff; }
+.btn-sky { background: var(--sky); color: #fff; }
+.btn-sky:hover { color: #fff; }
+.btn-ghost { background: var(--card); }
+.btn[aria-disabled="true"] {
+  background: var(--silver); box-shadow: var(--shadow-press); cursor: default;
+}
+.btn[aria-disabled="true"]:hover { transform: none; }
+
+/* ---------- cards, chips, panels ---------- */
+.card {
+  background: var(--card); border: var(--border); border-radius: var(--radius);
+  padding: 1.1rem 1.2rem; box-shadow: var(--shadow);
+}
+.card > :last-child { margin-bottom: 0; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.15rem 0.7rem; border-radius: 999px; border: 2px solid var(--ink);
+  font-family: var(--font-display); font-weight: 600; font-size: 0.85rem; line-height: 1.5;
+  background: var(--card); color: var(--ink); white-space: nowrap;
+}
+/* meeting types: every chip also carries its word, so color is never the only signal */
+.chip-talk      { background: var(--sky); color: #fff; }
+.chip-work      { background: var(--tangerine); }
+.chip-special   { background: var(--grape); color: #fff; }
+.chip-hackathon { background: var(--sun); }
+.chip-break     { background: transparent; color: var(--muted); border-style: dashed; }
+/* badge colors named in data/scoreboard.json */
+.chip-sun       { background: var(--sun); }
+.chip-tangerine { background: var(--tangerine); }
+.chip-mint      { background: var(--mint); }
+.chip-coral     { background: var(--coral); }
+.chip-sky       { background: var(--sky); color: #fff; }
+.chip-grape     { background: var(--grape); color: #fff; }
+
+/* the friendly "something is off" panel drawn by Site.oopsHTML() */
+.oops {
+  background: var(--card); border: 3px dashed var(--coral); border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+.oops h3 { margin-top: 0; }
+.oops > :last-child { margin-bottom: 0; }
+.cmd {
+  display: flex; align-items: center; gap: 0.6rem;
+  background: var(--ink); color: #fff; border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem; margin: 0.6rem 0; overflow-x: auto;
+}
+.cmd code { background: none; color: #fff; padding: 0; white-space: nowrap; }
+.cmd button {
+  margin-left: auto; flex-shrink: 0; font: inherit; font-weight: 600; cursor: pointer;
+  background: var(--sun); color: var(--ink); border: 0; border-radius: 999px; padding: 0.3rem 0.8rem;
+}
+
+/* ---------- toast (Site.toast) ---------- */
+.toast {
+  position: fixed; left: 50%; z-index: 60;
+  bottom: calc(var(--tab-bar-height) + 16px + env(safe-area-inset-bottom, 0px));
+  max-width: calc(100% - 2rem); text-align: center;
+  background: var(--ink); color: #fff; padding: 0.7rem 1.2rem; border-radius: 999px;
+  font-family: var(--font-display); font-weight: 600; box-shadow: var(--shadow);
+  animation: toast-in 0.25s ease-out both;
+}
+@media (min-width: 700px) { .toast { bottom: 24px; } }
+
+/* ---------- confetti (Site.confetti) ---------- */
+.confetti-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 70; }
+
+/* ---------- footer (drawn by js/shared.js) ---------- */
+.site-footer {
+  margin-top: 2rem; border-top: var(--border); background: var(--card);
+  padding: 1.5rem 1rem;
+}
+.site-footer .inner {
+  max-width: var(--max-width); margin: 0 auto;
+  display: flex; flex-wrap: wrap; gap: 1rem 2rem; justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+/* ---------- motion ---------- */
+@keyframes float-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes pop-in   { from { opacity: 0; transform: scale(0.9); }       to { opacity: 1; transform: none; } }
+@keyframes toast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes wiggle   { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes bounce   { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-10px); } }
+
+/* add class="reveal" (plus reveal-delay-1..6) to stagger things in */
+.reveal { animation: float-in 0.45s ease-out both; }
+.reveal-pop { animation: pop-in 0.35s ease-out both; }
+.reveal-delay-1 { animation-delay: 0.07s; }
+.reveal-delay-2 { animation-delay: 0.14s; }
+.reveal-delay-3 { animation-delay: 0.21s; }
+.reveal-delay-4 { animation-delay: 0.28s; }
+.reveal-delay-5 { animation-delay: 0.35s; }
+.reveal-delay-6 { animation-delay: 0.42s; }
+
+/* Reduced motion: animations jump to their final frame instead of being
+   removed, so nothing that starts at opacity 0 stays invisible. JS checks
+   Site.motionOK() before doing confetti or count-ups. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
