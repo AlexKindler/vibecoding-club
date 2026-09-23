@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Calendar — VibeCoding Club</title>
+  <meta name="description" content="Every VibeCoding Club meeting on one page: TALK days, WORK days, specials and the Blooket Hackathon. Tuesdays at Menlo School.">
+  <meta name="theme-color" content="#FFD53D">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles that only the calendar page uses. Shared styles live in css/style.css. */
+
+    /* top: title, the weekly line, the official-calendar link */
+    .cal-top { padding: 1rem 0 0.25rem; }
+    .cal-top h1 { margin-bottom: 0.15rem; }
+    .cal-top .meta { font-weight: 600; margin: 0 0 0.9rem; }
+    .cal-top .btn { font-size: 0.95rem; padding: 0.6rem 1.1rem; min-height: 44px; }
+
+    /* legend: what each chip means */
+    .legend { padding: 0.9rem 1rem; }
+    .legend ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .legend li { display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem; }
+    .legend-what { font-size: 0.9rem; line-height: 1.35; color: var(--muted); }
+
+    /* one heading per month, one row per meeting */
+    .cal-month { margin: 1.6rem 0 0.7rem; }
+    .cal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
+    .ev {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      background: var(--card); border: var(--border); border-left: 6px solid var(--line);
+      border-radius: var(--radius-sm); padding: 0.7rem 0.9rem 0.7rem 0.75rem; box-shadow: var(--shadow-press);
+    }
+    /* the left edge repeats the chip color, so color is never the only signal */
+    .ev-talk      { border-left-color: var(--sky); }
+    .ev-work      { border-left-color: var(--tangerine); }
+    .ev-special   { border-left-color: var(--grape); }
+    .ev-hackathon { border-left-color: var(--sun); }
+    .ev-break     { border-left-color: var(--silver); border-left-style: dashed; color: var(--muted); background: var(--paper); box-shadow: none; }
+
+    /* the compact date block: weekday on top, day number big */
+    .ev-date {
+      flex: 0 0 3.3rem; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 0.35rem 0; border: 2px solid var(--ink); border-radius: var(--radius-sm);
+      background: var(--paper); font-family: var(--font-display); line-height: 1; text-align: center;
+    }
+    .ev-break .ev-date { border-style: dashed; border-color: var(--muted); }
+    .ev-today .ev-date { background: var(--sun); }
+    .ev-wd { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .ev-day { font-size: 1.7rem; font-weight: 700; margin-top: 0.15rem; }
+
+    .ev-main { flex: 1; min-width: 0; overflow-wrap: break-word; }
+    .ev-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0 0 0.35rem; }
+    .ev-title { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; line-height: 1.25; margin: 0 0 0.2rem; }
+    /* padding + matching negative margin = a 44px-tall tap target that does not move the text */
+    .ev-title a { display: inline-block; padding: 0.65rem 0; margin: -0.65rem 0; }
+    .ev-desc { margin: 0 0 0.25rem; }
+    .ev-where { margin: 0; font-size: 0.95rem; }
+
+    /* past meetings fold away under one line */
+    .past { margin-top: 2rem; }
+    .past summary {
+      display: flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer;
+      list-style: none; padding: 0.4rem 0.3rem; border-radius: var(--radius-sm);
+    }
+    .past summary::-webkit-details-marker { display: none; }
+    .past-arrow { font-size: 0.85rem; transition: transform 0.15s ease; }
+    .past[open] .past-arrow { transform: rotate(90deg); }
+    .past summary h2 { margin: 0; font-size: 1.4rem; }
+    .past .cal-month { font-size: 1.2rem; margin-top: 1.2rem; }
+
+    .cal-empty p:last-child { margin-bottom: 0; }
+    .cal-note { margin-top: 2rem; font-size: 0.95rem; }
+
+    @media (min-width: 700px) {
+      .cal-top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 0.3rem 1.5rem; }
+      .cal-top .meta { margin-bottom: 0.4rem; }
+      .cal-top .link-line { margin: 0 0 0.6rem; }
+      .legend ul { grid-template-columns: repeat(4, 1fr); }
+      .ev { gap: 1.1rem; padding: 0.9rem 1.2rem 0.9rem 1rem; }
+      .ev-date { flex-basis: 4rem; padding: 0.45rem 0; }
+      .ev-day { font-size: 2rem; }
+      .ev-title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+  <header id="site-header">
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+  </header>
+
+  <main id="main-content">
+    <section class="cal-top">
+      <div>
+        <h1 class="reveal"><span aria-hidden="true">📅</span> Calendar</h1>
+        <p class="meta reveal reveal-delay-1">
+          <span data-site="meeting.day">Tuesdays</span> · <span data-site="meeting.time">Lunch</span> · <span data-site="meeting.room">Room TBD</span>
+        </p>
+      </div>
+      <p class="link-line reveal reveal-delay-2">
+        <a class="btn btn-ghost" data-site-link="links.schoolClubsCalendar" href="https://www.menloschool.org/" target="_blank" rel="noopener">
+          Official Menlo Clubs calendar <span aria-hidden="true">↗</span><span class="visually-hidden">(opens in a new tab)</span>
+        </a>
+      </p>
+    </section>
+
+    <section class="legend card reveal reveal-delay-3" aria-labelledby="legend-title">
+      <p class="eyebrow" id="legend-title">What the colors mean</p>
+      <ul role="list">
+        <li><span class="chip chip-talk">TALK day</span> <span class="legend-what">speakers, demos, short lessons</span></li>
+        <li><span class="chip chip-work">WORK day</span> <span class="legend-what">open build time, show and tell</span></li>
+        <li><span class="chip chip-special">Special</span> <span class="legend-what">guests and one-off surprises</span></li>
+        <li><span class="chip chip-hackathon">Hackathon</span> <span class="legend-what">the big build day with a prize</span></li>
+      </ul>
+    </section>
+
+    <section id="calendar-body" aria-label="Meetings">
+      <p class="muted">Loading the calendar…</p>
+      <noscript><p>Turn on JavaScript to see the meeting list, or open <code>data/events.json</code> on GitHub.</p></noscript>
+    </section>
+
+    <p class="cal-note muted">To add or change a meeting, edit <code>data/events.json</code> (see the README).</p>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/shared.js"></script>
+  <script src="js/calendar.js"></script>
+</body>
+</html>

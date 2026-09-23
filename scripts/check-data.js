@@ -2,32 +2,26 @@
 /*
   check-data.js: the club's data checker.
 
-  What it does
-    Reads the four files in data/ (site.json, events.json, scoreboard.json,
-    resources.json) and checks that each one is valid JSON and that every
-    value makes sense: real dates, links that start with https://, badge ids
-    that exist, names that follow the "Ava K." or "pixelwiz" rule, and so on.
-    It also does a quick hygiene pass over the HTML, JS and CSS so the site
-    keeps working on GitHub Pages (no absolute paths, no module scripts,
-    every local link points at a file that really exists, no huge files).
+  What it does: reads the four files in data/ (site.json, events.json,
+  scoreboard.json, resources.json), checks that each is valid JSON and that
+  every value makes sense (real dates, links that start with https://, badge
+  ids that exist, names written like "Ava K." or "pixelwiz"). Then it does a
+  quick hygiene pass over the HTML, JS and CSS so the site keeps working on
+  GitHub Pages: no absolute paths, no module scripts, every local link points
+  at a file that really exists with the same capitalization, no file over 500 KB.
 
-  How to run it
-    node scripts/check-data.js          (from any folder inside the repo)
-    The GitHub Action runs the exact same command on every pull request.
-    ERROR lines fail the run. WARN lines are reminders (placeholders, empty
-    links, a meeting on the wrong weekday) and never fail it, so every run
-    also works as the leader's to-do list.
+  How to run: node scripts/check-data.js (from any folder inside the repo).
+  The GitHub Action runs the same command on every pull request. ERROR lines
+  fail the run; WARN lines are reminders (placeholders, empty links, a meeting
+  on the wrong weekday) and never fail it, so each run doubles as a to-do list.
 
-  How to add a rule
-    1. Find the function for the file you care about: checkSite, checkEvents,
-       checkScoreboard, checkResources or checkRepoHygiene.
-    2. Call error(file, line, message) or warn(file, line, message). Get the
-       line with lineOf(loc, value), where value is something unique in the
-       entry (its date, name or url). Write the message so a 14-year-old
-       knows what is wrong and what to do about it, in one sentence.
-    3. Run the script on the real data and make sure it still exits 0.
-
-  Only Node built-ins are used, so there is nothing to install.
+  How to add a rule: find the function for the file you care about (checkSite,
+  checkEvents, checkScoreboard, checkResources or checkRepoHygiene), then call
+  error(file, line, message) or warn(file, line, message). Get the line with
+  lineOf(loc, value), where value is something unique in the entry (its date,
+  name or url). Write the message so a 14-year-old knows what is wrong and
+  what to do, in one sentence. Run the script again and make sure the real
+  data still passes. Only Node built-ins are used; there is nothing to install.
 */
 'use strict';
 
@@ -51,36 +45,24 @@ let warningCount = 0;
 // ---------- reporting ----------
 
 function report(kind, file, line, message) {
-  const label = kind === 'error' ? 'ERROR' : 'WARN ';
-  console.log(`${label} ${file}:${line}  ${message}`);
+  console.log(`${kind === 'error' ? 'ERROR' : 'WARN '} ${file}:${line}  ${message}`);
   if (ON_GITHUB) {
     const safe = message.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
     console.log(`::${kind} file=${file},line=${line}::${safe}`);
   }
 }
 
-function error(file, line, message) {
-  errorCount += 1;
-  report('error', file, line, message);
-}
-
-function warn(file, line, message) {
-  warningCount += 1;
-  report('warning', file, line, message);
-}
+function error(file, line, message) { errorCount += 1; report('error', file, line, message); }
+function warn(file, line, message) { warningCount += 1; report('warning', file, line, message); }
 
 // ---------- finding line numbers in the raw file text ----------
 
-function lineOfIndex(text, index) {
-  return text.slice(0, index).split('\n').length;
-}
+function lineOfIndex(text, index) { return text.slice(0, index).split('\n').length; }
 
-// A locator remembers where the last match was, so repeated values (four
-// "Work Day" titles, two "Room TBD"s) resolve to the entry being checked,
-// as long as entries are checked in file order.
-function makeLocator(text) {
-  return { text, from: 0 };
-}
+// A locator remembers where the last match was, so repeated values (four "Work Day"
+// titles, two "Room TBD"s) resolve to the entry being checked, as long as entries
+// are checked in file order.
+function makeLocator(text) { return { text, from: 0 }; }
 
 function lineOf(loc, value) {
   const needle = JSON.stringify(String(value)); // adds quotes, so "2026-10-06" matches a whole value
@@ -90,30 +72,17 @@ function lineOf(loc, value) {
   return index < 0 ? 1 : lineOfIndex(loc.text, index);
 }
 
-function shorten(text) {
-  return text.length > 50 ? `${text.slice(0, 47)}...` : text;
-}
+function shorten(text) { return text.length > 50 ? `${text.slice(0, 47)}...` : text; }
 
 // ---------- reading and parsing ----------
 
 function readJson(file) {
   const full = path.join(ROOT, file);
-  if (!fs.existsSync(full)) {
-    error(file, 1, 'this file is missing; restore it from the main branch on GitHub');
-    return null;
-  }
+  if (!fs.existsSync(full)) { error(file, 1, 'this file is missing; restore it from the main branch on GitHub'); return null; }
   const text = fs.readFileSync(full, 'utf8');
   let data;
-  try {
-    data = JSON.parse(text);
-  } catch (e) {
-    reportParseError(file, text, e.message);
-    return null;
-  }
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    error(file, 1, 'the whole file should be one object that starts with { and ends with }');
-    return null;
-  }
+  try { data = JSON.parse(text); } catch (e) { reportParseError(file, text, e.message); return null; }
+  if (!isObject(data)) { error(file, 1, 'the whole file should be one object that starts with { and ends with }'); return null; }
   return { data, text };
 }
 
@@ -148,29 +117,16 @@ function jsonHints(text) {
 
 // ---------- small value checks ----------
 
-function isText(value) {
-  return typeof value === 'string';
-}
-
-function isFilledText(value) {
-  return typeof value === 'string' && value.trim() !== '';
-}
-
-function isObject(value) {
-  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
-}
-
-function isTime(value) {
-  return typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
-}
+function isText(value) { return typeof value === 'string'; }
+function isFilledText(value) { return typeof value === 'string' && value.trim() !== ''; }
+function isObject(value) { return Boolean(value) && typeof value === 'object' && !Array.isArray(value); }
+function isTime(value) { return typeof value === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(value); }
 
 // Returns a Date for a real calendar date written YYYY-MM-DD, otherwise null.
 function parseDate(value) {
   const m = typeof value === 'string' && value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return null;
-  const year = Number(m[1]);
-  const month = Number(m[2]);
-  const day = Number(m[3]);
+  const [year, month, day] = [Number(m[1]), Number(m[2]), Number(m[3])];
   const date = new Date(year, month - 1, day);
   const real = date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
   return real ? date : null;
@@ -187,7 +143,7 @@ function section(file, loc, data, key) {
   return null;
 }
 
-// Every key in `keys` must be non-empty text. Keys are listed in file order so line numbers stay right.
+// Every key in `keys` must be non-empty text. List keys in file order so the line numbers stay right.
 function requireTexts(file, loc, obj, keys, sectionName) {
   for (const key of keys) {
     const line = fieldLine(loc, obj, key, sectionName);
@@ -212,9 +168,9 @@ function checkSite(file, data, loc) {
     error(file, lineOf(loc, 'leaders'), 'leaders should be a list with at least one entry, like [{ "name": "Ava K.", "role": "Club lead" }]');
   } else {
     data.leaders.forEach((leader, i) => {
-      const ok = isObject(leader) && isFilledText(leader.name) && isFilledText(leader.role);
-      const line = lineOf(loc, isObject(leader) && isFilledText(leader.name) ? leader.name : 'leaders');
-      if (!ok) error(file, line, `leaders entry #${i + 1} needs both a name and a role in quotes, like { "name": "Ava K.", "role": "Club lead" }`);
+      const hasName = isObject(leader) && isFilledText(leader.name);
+      const line = lineOf(loc, hasName ? leader.name : 'leaders');
+      if (!hasName || !isFilledText(leader.role)) error(file, line, `leaders entry #${i + 1} needs both a name and a role in quotes, like { "name": "Ava K.", "role": "Club lead" }`);
     });
   }
 
@@ -224,22 +180,22 @@ function checkSite(file, data, loc) {
       const line = fieldLine(loc, links, key, 'links');
       const value = links[key];
       if (!isText(value)) error(file, line, `links.${key} should be a web address in quotes, or "" if you do not have it yet`);
-      else if (value === '' && key !== 'schoolClubsCalendar') warn(file, line, `links.${key} is empty, so the Join button will say coming soon until you paste the form link`);
+      else if (value === '' && key !== 'schoolClubsCalendar') warn(file, line, `links.${key} is empty, so the ${key === "joinForm" ? "Join" : "Register"} button will say coming soon until you paste the form link`);
       else if (value !== '' && !value.startsWith('https://')) error(file, line, `links.${key} should start with https:// (copy the full address from your browser)`);
     }
   }
 
   const hack = section(file, loc, data, 'hackathon');
-  if (hack) {
-    requireTexts(file, loc, hack, ['name', 'description'], 'hackathon');
-    if (!parseDate(hack.date)) error(file, fieldLine(loc, hack, 'date', 'hackathon'), 'hackathon.date should be a real date written YYYY-MM-DD, like "2026-11-14"');
-    if (!isTime(hack.time)) error(file, fieldLine(loc, hack, 'time', 'hackathon'), 'hackathon.time should be 24-hour HH:MM in quotes, like "09:00"');
-    if (typeof hack.dateConfirmed !== 'boolean') error(file, fieldLine(loc, hack, 'dateConfirmed', 'hackathon'), 'hackathon.dateConfirmed should be true or false, with no quotes');
-    requireTexts(file, loc, hack, ['where', 'prize', 'teamSize'], 'hackathon');
-    for (const key of ['rules', 'judging']) {
-      const list = hack[key];
-      const ok = Array.isArray(list) && list.length > 0 && list.every(isFilledText);
-      if (!ok) error(file, fieldLine(loc, hack, key, 'hackathon'), `hackathon.${key} should be a list of at least one sentence in quotes, separated by commas`);
+  if (!hack) return;
+  requireTexts(file, loc, hack, ['name', 'description'], 'hackathon');
+  if (!parseDate(hack.date)) error(file, fieldLine(loc, hack, 'date', 'hackathon'), 'hackathon.date should be a real date written YYYY-MM-DD, like "2026-11-14"');
+  if (!isTime(hack.time)) error(file, fieldLine(loc, hack, 'time', 'hackathon'), 'hackathon.time should be 24-hour HH:MM in quotes, like "09:00"');
+  if (typeof hack.dateConfirmed !== 'boolean') error(file, fieldLine(loc, hack, 'dateConfirmed', 'hackathon'), 'hackathon.dateConfirmed should be true or false, with no quotes');
+  requireTexts(file, loc, hack, ['where', 'prize', 'teamSize'], 'hackathon');
+  for (const key of ['rules', 'judging']) {
+    const list = hack[key];
+    if (!Array.isArray(list) || list.length === 0 || !list.every(isFilledText)) {
+      error(file, fieldLine(loc, hack, key, 'hackathon'), `hackathon.${key} should be a list of at least one sentence in quotes, separated by commas`);
     }
   }
 }
@@ -247,20 +203,13 @@ function checkSite(file, data, loc) {
 // ---------- data/events.json ----------
 
 function checkEvents(file, data, loc) {
-  if (!Array.isArray(data.events)) {
-    error(file, lineOf(loc, 'events'), 'there should be an "events" list: "events": [ ... ] with one { } entry per meeting');
-    return;
-  }
+  if (!Array.isArray(data.events)) { error(file, lineOf(loc, 'events'), 'there should be an "events" list: "events": [ ... ] with one { } entry per meeting'); return; }
   const seen = new Set();
   let latest = null; // the entry with the latest date so far
   data.events.forEach((entry, i) => {
     const label = `events entry #${i + 1}`;
-    if (!isObject(entry)) {
-      error(file, lineOf(loc, 'events'), `${label} should be an object between { and }`);
-      return;
-    }
-    const anchor = isFilledText(entry.date) ? entry.date : isFilledText(entry.title) ? entry.title : 'events';
-    const line = lineOf(loc, anchor);
+    if (!isObject(entry)) { error(file, lineOf(loc, 'events'), `${label} should be an object between { and }`); return; }
+    const line = lineOf(loc, isFilledText(entry.date) ? entry.date : isFilledText(entry.title) ? entry.title : 'events');
     const date = parseDate(entry.date);
     const name = date ? `the ${entry.date} entry` : label;
     if (!date) error(file, line, `${label} needs a real date written YYYY-MM-DD, like "2026-10-06"`);
@@ -295,10 +244,7 @@ function checkScoreboard(file, data, loc) {
     data.howToEarn.forEach((row, i) => {
       const label = `howToEarn entry #${i + 1}`;
       const line = lineOf(loc, isObject(row) && isFilledText(row.what) ? row.what : 'howToEarn');
-      if (!isObject(row)) {
-        error(file, line, `${label} should be an object between { and }`);
-        return;
-      }
+      if (!isObject(row)) { error(file, line, `${label} should be an object between { and }`); return; }
       if (!POINT_CATEGORIES.includes(row.category)) error(file, line, `${label} has category "${row.category}"; use attend, demo, site or hackathon`);
       if (!isFilledText(row.what)) error(file, line, `${label} needs a "what" in quotes that says how to earn the points`);
       if (!Number.isInteger(row.points) || row.points < 0) error(file, line, `${label} needs "points" as a whole number with no quotes, 0 or more`);
@@ -310,29 +256,20 @@ function checkScoreboard(file, data, loc) {
   for (const id of badgeIds) {
     const badge = badges[id];
     const line = lineOf(loc, id);
-    if (!isObject(badge)) {
-      error(file, line, `badge "${id}" should be an object like { "label": "Demo Star", "color": "sun", "how": "Demoed on a Work Day" }`);
-      continue;
-    }
+    if (!isObject(badge)) { error(file, line, `badge "${id}" should be an object like { "label": "Demo Star", "color": "sun", "how": "Demoed on a Work Day" }`); continue; }
     if (!isFilledText(badge.label)) error(file, line, `badge "${id}" needs a label in quotes`);
     if (!BADGE_COLORS.includes(badge.color)) error(file, line, `badge "${id}" has color "${badge.color}"; pick one of ${BADGE_COLORS.join(', ')}`);
     if (!isText(badge.how)) error(file, line, `badge "${id}" needs a "how" in quotes explaining how to earn it`);
   }
 
-  if (!Array.isArray(data.members)) {
-    error(file, lineOf(loc, 'members'), '"members" should be a list: "members": [ ... ] with one { } entry per person');
-    return;
-  }
+  if (!Array.isArray(data.members)) { error(file, lineOf(loc, 'members'), '"members" should be a list: "members": [ ... ] with one { } entry per person'); return; }
   const seenNames = new Set();
   let latestName = null; // the alphabetically latest name so far
   data.members.forEach((member, i) => {
     const name = isObject(member) && isText(member.name) ? member.name : '';
     const line = lineOf(loc, name || 'members');
     const label = name ? `member "${name}"` : `members entry #${i + 1}`;
-    if (!isObject(member)) {
-      error(file, line, `${label} should be an object between { and }`);
-      return;
-    }
+    if (!isObject(member)) { error(file, line, `${label} should be an object between { and }`); return; }
     if (!name) error(file, line, `${label} needs a "name" in quotes`);
     else if (!HANDLE.test(name) && !FIRST_NAME_LAST_INITIAL.test(name)) {
       error(file, line, `${label}: use first name + last initial (Ava K.) or a handle (pixelwiz); never a full name or email`);
@@ -343,34 +280,24 @@ function checkScoreboard(file, data, loc) {
       error(file, line, `${label} needs "points" as a whole number with no quotes, between 0 and 100000`);
     }
     if (!Array.isArray(member.badges)) error(file, line, `${label} needs "badges" as a list, even an empty one: "badges": []`);
-    else {
-      for (const id of member.badges) {
-        if (!badgeIds.includes(id)) error(file, line, `${label} has a badge "${id}" that is not in the badges section; valid ids are: ${badgeIds.join(', ')}`);
-      }
+    else for (const id of member.badges) {
+      if (!badgeIds.includes(id)) error(file, line, `${label} has a badge "${id}" that is not in the badges section; valid ids are: ${badgeIds.join(', ')}`);
     }
-    if (latestName !== null && name.localeCompare(latestName, undefined, { sensitivity: 'base' }) < 0) {
-      warn(file, line, `members are not in alphabetical order: move "${name}" up so it comes before "${latestName}"`);
-    }
-    if (latestName === null || name.localeCompare(latestName, undefined, { sensitivity: 'base' }) > 0) latestName = name;
+    const order = latestName === null ? 1 : name.localeCompare(latestName, undefined, { sensitivity: 'base' });
+    if (order < 0) warn(file, line, `members are not in alphabetical order: move "${name}" up so it comes before "${latestName}"`);
+    if (order > 0) latestName = name;
   });
 }
 
 // ---------- data/resources.json ----------
 
 function checkResources(file, data, loc) {
-  if (!Array.isArray(data.resources)) {
-    error(file, lineOf(loc, 'resources'), 'there should be a "resources" list: "resources": [ ... ] with one { } entry per link');
-    return;
-  }
+  if (!Array.isArray(data.resources)) { error(file, lineOf(loc, 'resources'), 'there should be a "resources" list: "resources": [ ... ] with one { } entry per link'); return; }
   data.resources.forEach((res, i) => {
     const ok = isObject(res);
-    const anchor = ok && isFilledText(res.url) ? res.url : ok && isFilledText(res.title) ? res.title : 'resources';
-    const line = lineOf(loc, anchor);
+    const line = lineOf(loc, ok && isFilledText(res.url) ? res.url : ok && isFilledText(res.title) ? res.title : 'resources');
     const label = ok && isFilledText(res.title) ? `resource "${shorten(res.title)}"` : `resources entry #${i + 1}`;
-    if (!ok) {
-      error(file, line, `${label} should be an object between { and }`);
-      return;
-    }
+    if (!ok) { error(file, line, `${label} should be an object between { and }`); return; }
     if (!isFilledText(res.title)) error(file, line, `${label} needs a title in quotes`);
     if (!isFilledText(res.url) || !res.url.startsWith('https://')) error(file, line, `${label} needs a url that starts with https:// (copy the full address from your browser)`);
     if (!isFilledText(res.blurb)) error(file, line, `${label} needs a one-sentence blurb in quotes`);
@@ -382,9 +309,7 @@ function checkResources(file, data, loc) {
 
 function checkPlaceholders(file, value, loc) {
   if (typeof value === 'string') {
-    if (value.includes('TBD') || value.includes('TODO')) {
-      warn(file, lineOf(loc, value), `"${shorten(value)}" is still a placeholder; replace it when you know the real answer`);
-    }
+    if (value.includes('TBD') || value.includes('TODO')) warn(file, lineOf(loc, value), `"${shorten(value)}" is still a placeholder; replace it when you know the real answer`);
   } else if (value && typeof value === 'object') {
     for (const child of Object.values(value)) checkPlaceholders(file, child, loc);
   }
@@ -392,14 +317,11 @@ function checkPlaceholders(file, value, loc) {
 
 // ---------- repo hygiene: HTML, JS, CSS and file sizes ----------
 
-const ABSOLUTE_PATH = /\b(?:href|src)\s*=\s*["']\/(?!\/)|\bfetch\(\s*["'`]\/(?!\/)|\burl\(\s*["']?\/(?!\/)/g;
+// href="x" and src="x" in HTML, href: 'x' in JS objects, fetch('x'), url(x) in CSS.
+const ABSOLUTE_PATH = /\b(?:href|src)\s*[=:]\s*["']\/(?!\/)|\bfetch\(\s*["'`]\/(?!\/)|\burl\(\s*["']?\/(?!\/)/g;
 const MODULE_SCRIPT = /<script[^>]*\btype\s*=\s*["']module["']/gi;
-const LOCAL_REFS = [
-  /\b(?:href|src)\s*=\s*["']([^"']*)["']/g,
-  /\bfetch\(\s*["'`]([^"'`]*)["'`]/g,
-  /\burl\(\s*["']?([^"')]*)["']?\s*\)/g,
-];
-const NOT_A_LOCAL_FILE = /^(?:https?:|mailto:|tel:|#|data:|javascript:|\/)/i; // "/" is reported by ABSOLUTE_PATH
+const LOCAL_REFS = [/\b(?:href|src)\s*[=:]\s*["']([^"']*)["']/g, /\bfetch\(\s*["'`]([^"'`]*)["'`]/g, /\burl\(\s*["']?([^"')]*)["']?\s*\)/g];
+const NOT_A_LOCAL_FILE = /^(?:https?:|mailto:|tel:|#|data:|javascript:|\/)/i; // "/" is reported by ABSOLUTE_PATH instead
 
 function listFiles(dir, out) {
   for (const name of fs.readdirSync(dir)) {
@@ -413,20 +335,15 @@ function listFiles(dir, out) {
 }
 
 function checkRepoHygiene() {
-  const files = listFiles(ROOT, []);
-  for (const f of files) {
-    if (f.size > MAX_FILE_BYTES) {
-      error(f.rel, 1, `this file is ${Math.round(f.size / 1024)} KB, over the 500 KB limit; shrink the image or video, or link to it instead of uploading it`);
-    }
-  }
-  for (const f of files) {
+  for (const f of listFiles(ROOT, [])) {
+    if (f.size > MAX_FILE_BYTES) error(f.rel, 1, `this file is ${Math.round(f.size / 1024)} KB, over the 500 KB limit; shrink the image or video, or link to it instead of uploading it`);
     if (/^[^/]+\.html$/.test(f.rel) || /^js\/[^/]+\.js$/.test(f.rel)) checkSourceFile(f.rel, ROOT);
     if (f.rel === 'css/style.css') checkSourceFile(f.rel, path.join(ROOT, 'css'));
   }
 }
 
-// baseDir is the folder that relative links in this file are measured from:
-// the repo root for pages and scripts (links in js/ are relative to the page), the css folder for style.css.
+// baseDir is the folder relative links are measured from: the repo root for pages and
+// for js/ (a script's links are relative to the page that loads it), the css folder for style.css.
 function checkSourceFile(file, baseDir) {
   const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
   let m;
@@ -457,10 +374,7 @@ function missingFileProblem(baseDir, target) {
   let dir = baseDir;
   for (const part of target.split('/')) {
     if (part === '' || part === '.') continue;
-    if (part === '..') {
-      dir = path.dirname(dir);
-      continue;
-    }
+    if (part === '..') { dir = path.dirname(dir); continue; }
     const names = fs.existsSync(dir) && fs.statSync(dir).isDirectory() ? fs.readdirSync(dir) : [];
     if (!names.includes(part)) {
       const near = names.find((n) => n.toLowerCase() === part.toLowerCase());

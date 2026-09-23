@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blooket Hackathon — VibeCoding Club</title>
+  <meta name="description" content="The VibeCoding Club Blooket Hackathon: a one-day build sprint in November with a $1,000 prize. Rules, judging, team size, and registration.">
+  <meta name="theme-color" content="#FFD53D">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles that only the hackathon page uses. Shared styles live in css/style.css. */
+    .hack-hero { text-align: center; padding: 1rem 0 0.25rem; }
+    .hack-hero .pitch { font-size: 1.1rem; max-width: 40ch; margin: 0 auto 1rem; }
+    .prize {
+      display: inline-flex; align-items: center; gap: 0.4rem; margin: 0.2rem 0 1rem;
+      background: var(--sun); border: var(--border); border-radius: 999px; box-shadow: var(--shadow);
+      padding: 0.45rem 1.2rem; font-family: var(--font-display); font-weight: 700; font-size: 1.4rem;
+    }
+    .facts { display: grid; gap: 0.7rem; margin: 1rem 0; text-align: left; }
+    .facts .card { padding: 0.8rem 1rem; }
+    .facts .eyebrow { margin-bottom: 0.1rem; }
+    .facts .fact { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; margin: 0; }
+    .register { margin: 0.6rem 0 0.5rem; }
+
+    /* Countdown tiles */
+    .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .tile {
+      background: var(--grape); color: #fff; border: var(--border); border-radius: var(--radius-sm);
+      padding: 0.7rem 0.2rem 0.6rem; text-align: center; box-shadow: var(--shadow);
+    }
+    .tile .num { display: block; font-family: var(--font-display); font-weight: 700; line-height: 1; font-size: clamp(1.7rem, 9vw, 3rem); font-variant-numeric: tabular-nums; }
+    .tile .lbl { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.35rem; }
+    .status-card { text-align: center; }
+    .status-card .big { font-size: 2.6rem; line-height: 1; margin-bottom: 0.4rem; }
+    .status-card > :last-child { margin-bottom: 0; }
+
+    .earn-list { list-style: none; padding: 0; margin: 0 0 0.8rem; }
+    .earn-list li { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 2px dashed var(--line); }
+    .earn-list li:last-child { border-bottom: 0; }
+    .earn-list .what { flex: 1; }
+    .two-col { display: grid; gap: 1.5rem; }
+    .two-col ol, .two-col ul { margin-bottom: 0; }
+    .two-col li + li { margin-top: 0.4rem; }
+
+    @media (min-width: 700px) {
+      .facts { grid-template-columns: repeat(3, 1fr); }
+      .two-col { grid-template-columns: 1fr 1fr; align-items: start; }
+      .two-col > section + section { margin-top: 0; }
+    }
+  </style>
+</head>
+<body>
+  <header id="site-header">
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+  </header>
+
+  <main id="main-content">
+    <section class="hack-hero">
+      <p class="eyebrow reveal">Event</p>
+      <h1 class="reveal" data-site="hackathon.name">Blooket Hackathon</h1>
+      <p class="prize reveal-pop reveal-delay-1"><span aria-hidden="true">🏆</span> <span data-site="hackathon.prize">$1,000</span> prize</p>
+      <p class="pitch reveal reveal-delay-2" data-site="hackathon.description">A one-day build sprint. Teams use AI coding tools to make an original quiz game or classroom tool in the spirit of Blooket, then demo it live. $1,000 to the winners. Full details coming soon.</p>
+      <div class="facts reveal reveal-delay-3">
+        <div class="card"><p class="eyebrow">When</p><p class="fact" id="when-fact">November 2026 · exact date coming soon</p></div>
+        <div class="card"><p class="eyebrow">Where</p><p class="fact" data-site="hackathon.where">Room TBD</p></div>
+        <div class="card"><p class="eyebrow">Teams</p><p class="fact" data-site="hackathon.teamSize">Teams of 1 to 4</p></div>
+      </div>
+      <p class="register reveal reveal-delay-4"><a class="btn btn-big btn-grape" data-register href="#">Register your team</a></p>
+    </section>
+
+    <section aria-labelledby="countdown-title">
+      <h2 id="countdown-title">Countdown to kickoff</h2>
+      <div id="countdown"><p class="muted">Loading the countdown…</p></div>
+      <p id="countdown-live" class="visually-hidden" aria-live="polite"></p>
+    </section>
+
+    <div class="two-col">
+      <section class="card" aria-labelledby="rules-title">
+        <h2 id="rules-title">Rules</h2>
+        <div id="rules">
+          <ol>
+            <li>Original art and names only. No Blooket logos, characters or screenshots.</li>
+            <li>Any AI tool is allowed. Say which ones you used.</li>
+            <li>Code written before kickoff does not count.</li>
+            <li>Every team demos, finished or not.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="judging-title">
+        <h2 id="judging-title">How it's judged</h2>
+        <div id="judging">
+          <ul>
+            <li>Fun to play</li>
+            <li>Works without crashing</li>
+            <li>Originality</li>
+            <li>Demo quality</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+
+    <section class="card" aria-labelledby="placing-title">
+      <h2 id="placing-title">Points for placing</h2>
+      <div id="placing"><p class="muted">Loading…</p></div>
+      <p class="muted">Results are added to the <a href="scoreboard.html">scoreboard</a> the week after.</p>
+    </section>
+
+    <section class="card" aria-labelledby="art-title">
+      <h2 id="art-title">Original art only</h2>
+      <p>No Blooket logos, characters or screenshots. The theme is the spirit of the game, not its assets. Draw your own, generate your own, or keep it simple.</p>
+      <p><a href="calendar.html">Back to the calendar</a></p>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/shared.js"></script>
+  <script src="js/hackathon.js"></script>
+</body>
+</html>

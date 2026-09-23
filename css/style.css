@@ -183,7 +183,7 @@ section + section { margin-top: 1.5rem; }
 .btn-sky:hover { color: #fff; }
 .btn-ghost { background: var(--card); }
 .btn[aria-disabled="true"] {
-  background: var(--silver); box-shadow: var(--shadow-press); cursor: default;
+  background: var(--silver); color: var(--ink); box-shadow: var(--shadow-press); cursor: default;
 }
 .btn[aria-disabled="true"]:hover { transform: none; }
 

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Info — VibeCoding Club</title>
+  <meta name="description" content="What VibeCoding Club is, what vibe coding means, when we meet at Menlo School, how meetings work, answers to common questions, and links to get started.">
+  <meta name="theme-color" content="#FFD53D">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles that only the Info page uses. Shared styles live in css/style.css. */
+    .intro { padding-top: 1rem; }
+    .intro .lead { font-size: 1.2rem; }
+    /* keep long lines of prose readable on wide screens */
+    .intro p, .vibe > p, .alt-line, .faq .answer { max-width: 62ch; }
+
+    /* the tiny example chat: "You" bubbles on the right, "AI" bubbles on the left */
+    .convo {
+      display: flex; flex-direction: column; gap: 0.55rem; max-width: 34rem;
+      background: var(--card); border: var(--border); border-radius: var(--radius);
+      padding: 1rem; margin: 0 0 1rem; box-shadow: var(--shadow);
+    }
+    .convo p {
+      margin: 0; max-width: 88%; padding: 0.5rem 0.9rem;
+      border: 2px solid var(--ink); border-radius: 18px;
+    }
+    .convo .you { align-self: flex-end; background: var(--sun); border-bottom-right-radius: 6px; }
+    .convo .ai  { align-self: flex-start; background: var(--mint); border-bottom-left-radius: 6px; }
+
+    /* when and where */
+    .when-line { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; margin: 0 0 0.3rem; }
+    .leader-list { list-style: none; padding: 0; margin: 0 0 1rem; }
+    .leader-list li { padding: 0.15rem 0; }
+    /* the Join button can read "Join the club (form coming soon)" until the form link exists, so let it wrap on phones */
+    .when-where .btn { margin-top: 0.3rem; white-space: normal; max-width: 100%; text-align: center; }
+
+    /* TALK day / WORK day cards */
+    .day-grid { display: grid; gap: 1rem; margin-bottom: 1rem; }
+    .day-card h3 { margin: 0.6rem 0 0.3rem; }
+    .day-card p { margin: 0; }
+
+    /* FAQ: native <details>, no JS. The + in the circle turns into an x when open. */
+    .faq {
+      background: var(--card); border: var(--border); border-radius: var(--radius-sm);
+      margin-bottom: 0.6rem; box-shadow: var(--shadow-press);
+    }
+    .faq summary {
+      display: flex; align-items: center; gap: 0.7rem; min-height: 44px;
+      padding: 0.6rem 0.9rem; cursor: pointer; list-style: none;
+      font-family: var(--font-display); font-weight: 600; font-size: 1.05rem;
+    }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary:hover { color: var(--grape); }
+    .faq summary::before {
+      content: "+"; flex-shrink: 0; width: 28px; height: 28px;
+      display: grid; place-items: center; font-size: 1.3rem; line-height: 1;
+      background: var(--sun); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px;
+      transition: transform 0.2s ease;
+    }
+    .faq[open] summary::before { transform: rotate(45deg); }
+    .faq .answer { padding: 0 0.9rem 0.9rem calc(0.9rem + 28px + 0.7rem); }
+    .faq .answer p { margin: 0; }
+
+    /* resources (drawn by js/info.js from data/resources.json) */
+    .resource-list { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.8rem; }
+    .resource {
+      background: var(--card); border: var(--border); border-radius: var(--radius-sm);
+      padding: 0.6rem 1rem 0.9rem; box-shadow: var(--shadow-press);
+    }
+    .resource .top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.7rem; }
+    .resource .top a {
+      display: inline-block; padding: 0.45rem 0;
+      font-family: var(--font-display); font-weight: 600; font-size: 1.1rem;
+    }
+    .resource p { margin: 0; }
+
+    @media (min-width: 700px) {
+      .day-grid, .resource-list { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header id="site-header">
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+  </header>
+
+  <main id="main-content">
+    <section class="intro reveal">
+      <p class="eyebrow">Start here</p>
+      <h1>What is VibeCoding Club?</h1>
+      <p class="lead">We are a club at <span data-site="club.school">Menlo School</span> that builds real apps and games together using AI coding tools. You say what you want, the AI writes the code, and you steer, test and make it yours.</p>
+      <p>No experience needed. Bring curiosity (and your lunch). This November we are running the <a href="hackathon.html"><span data-site="hackathon.prize">$1,000</span> <span data-site="hackathon.name">Blooket Hackathon</span></a>, and every meeting you show up to earns you points on the <a href="scoreboard.html">scoreboard</a>.</p>
+    </section>
+
+    <section class="vibe reveal reveal-delay-1" aria-labelledby="vibe-title">
+      <h2 id="vibe-title">What is vibe coding?</h2>
+      <p>You describe the app you want in normal words. An AI tool like Claude Code, Copilot or ChatGPT writes the code. You run it, see what happens, and keep asking for changes until it feels right. You learn by doing, and by reading what the AI made.</p>
+      <p class="eyebrow">An example conversation</p>
+      <div class="convo" role="group" aria-label="Example conversation">
+        <p class="you"><strong>You:</strong> “Make a page with a button that plays a sound.”</p>
+        <p class="ai"><strong>AI:</strong> <em>writes the code</em> <span aria-hidden="true">⌨️</span></p>
+        <p class="you"><strong>You:</strong> “Make the button huge and purple.”</p>
+      </div>
+      <p>That is the whole trick. Repeat until it is awesome.</p>
+    </section>
+
+    <section class="card when-where reveal reveal-delay-2" aria-labelledby="when-title">
+      <h2 id="when-title">When and where</h2>
+      <p class="when-line"><span aria-hidden="true">📍</span> <span data-site="meeting.day">Tuesdays</span> · <span data-site="meeting.time">Lunch (exact time TBD)</span> · <span data-site="meeting.room">Room TBD</span></p>
+      <p class="muted">At <span data-site="club.school">Menlo School</span>. Bring your lunch, and a laptop if you have one.</p>
+      <h3 class="eyebrow">Who runs it</h3>
+      <div id="leaders">
+        <ul class="leader-list"><li>Alex K. <span class="muted">· Club lead</span></li></ul>
+      </div>
+      <a class="btn" data-join href="#">Join the club</a>
+    </section>
+
+    <section class="reveal reveal-delay-3" aria-labelledby="how-title">
+      <h2 id="how-title">How meetings work</h2>
+      <div class="day-grid">
+        <div class="card day-card">
+          <span class="chip chip-talk">TALK day</span>
+          <h3><span aria-hidden="true">🎤</span> Listen, watch, ask</h3>
+          <p>Speakers, demos and short lessons. Come with questions.</p>
+        </div>
+        <div class="card day-card">
+          <span class="chip chip-work">WORK day</span>
+          <h3><span aria-hidden="true">🛠️</span> Build, show, talk</h3>
+          <p>Open build time, show and tell, and discussion. Come with a project, or pick one on the spot.</p>
+        </div>
+      </div>
+      <p class="alt-line">We alternate: TALK one week, WORK the next. See the <a href="calendar.html">calendar</a> to find out which is which.</p>
+    </section>
+
+    <section class="reveal reveal-delay-4" aria-labelledby="faq-title">
+      <h2 id="faq-title">FAQ</h2>
+      <details class="faq">
+        <summary>Do I need to know how to code?</summary>
+        <div class="answer"><p>No. Most of us started here with zero experience. If you can describe an idea in words, you can vibe code.</p></div>
+      </details>
+      <details class="faq">
+        <summary>Do I need my own laptop?</summary>
+        <div class="answer"><p>A school laptop or any computer with a browser works. Most AI tools run right in the browser, so there is nothing to install on day one.</p></div>
+      </details>
+      <details class="faq">
+        <summary>Which AI tools do we use?</summary>
+        <div class="answer"><p>Any of them: Claude Code, GitHub Copilot, ChatGPT, Cursor and more. The club has no required tool. Try a couple and keep the one you like.</p></div>
+      </details>
+      <details class="faq">
+        <summary>Does it cost anything?</summary>
+        <div class="answer"><p>No. The club is free, and the AI tools we use all have free plans. Some give students even more for free.</p></div>
+      </details>
+      <details class="faq">
+        <summary>Can I come to just some meetings?</summary>
+        <div class="answer"><p>Yes. Come when you can. You still earn points for every meeting you attend.</p></div>
+      </details>
+      <details class="faq">
+        <summary>How do I get on the scoreboard?</summary>
+        <div class="answer"><p>Come to a meeting, demo something on a WORK day, or help build this website. The <a data-site-link="club.repo" href="https://github.com/AlexKindler/vibecoding-club">README on GitHub</a> shows how to make your first change.</p></div>
+      </details>
+    </section>
+
+    <section class="reveal reveal-delay-5" aria-labelledby="resources-title">
+      <h2 id="resources-title">Resources</h2>
+      <div id="resources"><p class="muted">Loading the links…</p></div>
+      <p class="muted">Want to add a link? Edit <code>data/resources.json</code>. It is the easiest first pull request.</p>
+    </section>
+  </main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/shared.js"></script>
+  <script src="js/info.js"></script>
+</body>
+</html>
