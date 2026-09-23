@@ -19,7 +19,7 @@
       '<h3>' + Site.esc(next.title) + '</h3>' +
       '<p class="when">' + Site.esc(Site.formatDate(next.date, 'long')) + ' · ' + Site.esc(time) + ' · ' + Site.esc(room) + '</p>' +
       (next.description ? '<p>' + Site.esc(next.description) + '</p>' : '') +
-      '<a href="' + Site.esc(next.href || 'calendar.html') + '">See the whole calendar</a>';
+      '<a href="calendar.html">See the whole calendar</a>';
   });
 
   // Top 3: ranked from scoreboard.json. Ties share a rank.

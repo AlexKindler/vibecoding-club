@@ -29,7 +29,6 @@
 
     var title = Site.esc(e.title);
     if (e.tbd) title += ' <span class="muted">(date TBD)</span>';
-    if (e.href) title = '<a href="' + Site.esc(e.href) + '">' + title + '</a>';
 
     // BREAK weeks have no meeting, so no time or room line.
     var where = '';
@@ -74,7 +73,7 @@
   // The whole calendar: upcoming months first, then past meetings folded away.
   Site.section('#calendar-body', 'data/events.json', function (data, site) {
     var today = Site.todayISO();
-    var all = Site.allEvents(data, site);
+    var all = Site.allEvents(data);
     var upcoming = all.filter(function (e) { return e.date >= today; });
     var past = all.filter(function (e) { return e.date < today; });
     var html = '';

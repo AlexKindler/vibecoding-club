@@ -2,7 +2,7 @@
  *
  * It draws the header, the phone tab bar and the footer, loads data/*.json
  * with friendly error panels, and offers small helpers for dates, ranking,
- * countdowns, confetti and toasts. Everything hangs off one global: Site.
+ * confetti and toasts. Everything hangs off one global: Site.
  *
  * A page script (js/home.js, js/calendar.js, ...) usually needs just this:
  *
@@ -220,7 +220,7 @@
   // Today and later.
   Site.upcomingEvents = function (eventsData, site) {
     var today = Site.todayISO();
-    return Site.allEvents(eventsData, site).filter(function (e) { return e.date >= today; });
+    return Site.allEvents(eventsData).filter(function (e) { return e.date >= today; });
   };
 
   // The next real meeting: skips BREAK weeks and events whose date is still TBD.
@@ -309,7 +309,7 @@
     if (!header) return;
     header.className = 'site-header';
     header.innerHTML =
-      '<a class="skip-link" href="#main-content">Skip to content</a>' +
+      '<a class="skip-link" href="' + Site.esc(location.pathname + location.search) + '#main-content">Skip to content</a>' +
       '<div class="inner">' +
         '<a class="brand" href="index.html" aria-label="VibeCoding Club home"><img src="img/logo.svg" alt="" width="36" height="36"><span class="brand-name">VibeCoding Club</span></a>' +
         '<nav class="top-nav" aria-label="Pages">' + navLinks(false) + '</nav>' +
@@ -328,7 +328,7 @@
     footer.innerHTML =
       '<div class="inner">' +
         '<div><strong>VibeCoding Club</strong> at <span data-site="club.school">Menlo School</span>' +
-        '<br><span class="muted" id="footer-leaders"></span></div>' +
+        '<span class="muted" id="footer-leaders"></span></div>' +
         '<div><a data-site-link="club.repo" href="https://github.com/AlexKindler/vibecoding-club">Edit this site on GitHub</a>' +
         '<br><span class="muted">Built by club members with AI coding tools.</span></div>' +
       '</div>';
@@ -355,7 +355,7 @@
       return Site.esc(l.name) + (l.role ? ' · ' + Site.esc(l.role) : '');
     }).join('  ·  ');
     var footerLeaders = document.getElementById('footer-leaders');
-    if (footerLeaders) footerLeaders.innerHTML = leaders;
+    if (footerLeaders) footerLeaders.innerHTML = leaders ? '<br>' + leaders : '';
   }
 
   // The Join button: celebrates and then opens the form, or says "coming soon" if the link is empty.

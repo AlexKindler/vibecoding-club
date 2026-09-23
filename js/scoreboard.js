@@ -77,7 +77,7 @@
   // Everyone, as a table.
   Site.section('#ranking', 'data/scoreboard.json', function (data) {
     var ranked = Site.rankMembers(data.members);
-    if (!ranked.length) return '<p>No members yet.</p>';
+    if (!ranked.length) { saveRanks([]); return '<p>No members yet.</p>'; }
     var oldRanks = loadOldRanks();
     var rows = ranked.map(function (m, i) {
       var topClass = m.rank <= 3 ? ' top-' + m.rank : '';
