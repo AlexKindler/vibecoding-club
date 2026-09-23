@@ -9,7 +9,7 @@
   'use strict';
 
   var Site = window.Site || (window.Site = {});
-  var COLORS = ['#FFD53D', '#FF8A00', '#34D399', '#FF6B6B', '#2A5BD7', '#6D28D9'];
+  var COLORS = ['#39FF88', '#33D6FF', '#B48CFF', '#FFD23F', '#FF6B8A'];
 
   // quietMessage is what to say instead when the visitor prefers reduced motion.
   Site.confetti = function (fromEl, quietMessage) {

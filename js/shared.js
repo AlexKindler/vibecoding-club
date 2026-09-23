@@ -24,7 +24,6 @@
     { href: 'index.html',      label: 'Home',      icon: '🏠' },
     { href: 'info.html',       label: 'Info',      icon: '💡' },
     { href: 'scoreboard.html', label: 'Scores',    icon: '🏆' },
-    { href: 'hackathon.html',  label: 'Hackathon', icon: '🎮' },
     { href: 'calendar.html',   label: 'Calendar',  icon: '📅' }
   ];
 
@@ -35,8 +34,7 @@
     club: { name: 'VibeCoding Club', school: 'Menlo School', pitch: 'Build real apps and games with AI coding tools. No experience needed.', repo: 'https://github.com/AlexKindler/vibecoding-club' },
     meeting: { day: 'Tuesdays', time: 'Lunch', room: 'Room TBD' },
     leaders: [],
-    links: { joinForm: '', hackathonForm: '', schoolClubsCalendar: '' },
-    hackathon: { name: 'Blooket Hackathon', description: '', date: '', time: '', dateConfirmed: false, where: '', prize: '$1,000', teamSize: '', rules: [], judging: [] }
+    links: { joinForm: '', schoolClubsCalendar: '' }
   };
 
   /* ======================= tiny helpers ======================= */
@@ -212,17 +210,9 @@
 
   /* ======================= events & scoreboard ======================= */
 
-  // All events in date order, with the hackathon row added from site.json.
-  Site.allEvents = function (eventsData, site) {
+  // All events in date order.
+  Site.allEvents = function (eventsData) {
     var list = ((eventsData && eventsData.events) || []).slice();
-    var h = site && site.hackathon;
-    if (h && h.date) {
-      list.push({
-        date: h.date, type: 'HACKATHON', title: h.name || 'Hackathon',
-        description: h.description || '', time: h.time, room: h.where,
-        tbd: !h.dateConfirmed, href: 'hackathon.html'
-      });
-    }
     list.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
     return list;
   };
@@ -241,8 +231,8 @@
     return list[0] || null;
   };
 
-  var TYPE_CLASS = { TALK: 'chip-talk', WORK: 'chip-work', SPECIAL: 'chip-special', HACKATHON: 'chip-hackathon', BREAK: 'chip-break' };
-  var TYPE_LABEL = { TALK: 'TALK day', WORK: 'WORK day', SPECIAL: 'Special', HACKATHON: 'Hackathon', BREAK: 'No meeting' };
+  var TYPE_CLASS = { TALK: 'chip-talk', WORK: 'chip-work', SPECIAL: 'chip-special', BREAK: 'chip-break' };
+  var TYPE_LABEL = { TALK: 'TALK day', WORK: 'WORK day', SPECIAL: 'Special', BREAK: 'No meeting' };
 
   // A color-coded chip for a meeting type. The word is always shown too.
   Site.chip = function (type) {
@@ -262,50 +252,6 @@
       m.rank = rank;
     });
     return sorted;
-  };
-
-  /* ======================= hackathon countdown ======================= */
-
-  // { state: 'tbd' | 'counting' | 'live' | 'past', days, hours, minutes, seconds, target }
-  Site.hackathonStatus = function (site, now) {
-    var h = (site && site.hackathon) || {};
-    if (!h.dateConfirmed || !h.date) return { state: 'tbd' };
-    var target = Site.parseLocalDate(h.date, h.time || '09:00');
-    now = now || new Date();
-    var diff = target - now;
-    if (diff > 0) {
-      // Count whole calendar days first, so the clock change in November does not shift the hours.
-      var cursor = new Date(now), days = 0;
-      for (;;) {
-        var next = new Date(cursor);
-        next.setDate(next.getDate() + 1);
-        if (next > target) break;
-        cursor = next; days++;
-      }
-      var s = Math.floor((target - cursor) / 1000);
-      return {
-        state: 'counting', target: target,
-        days: days, hours: Math.min(23, Math.floor(s / 3600)),
-        minutes: Math.floor((s % 3600) / 60), seconds: s % 60
-      };
-    }
-    if (-diff < 10 * 3600 * 1000) return { state: 'live', target: target };
-    return { state: 'past', target: target };
-  };
-
-  // Calls onTick(status) now and then every `everyMs` (default 1000). Returns a stop function.
-  Site.countdown = function (site, onTick, everyMs) {
-    var timer = null;
-    function tick() {
-      var status = Site.hackathonStatus(site);
-      onTick(status);
-      var keepGoing = status.state === 'counting' || status.state === 'live';
-      if (!keepGoing && timer) { clearInterval(timer); timer = null; }
-    }
-    tick();
-    var first = Site.hackathonStatus(site).state;
-    if (first === 'counting' || first === 'live') timer = setInterval(tick, everyMs || 1000);
-    return function stop() { if (timer) clearInterval(timer); };
   };
 
   /* ======================= celebrations ======================= */
@@ -405,11 +351,6 @@
       setupLinkButton(btn, joinUrl, 'Join the club', 'Join the club (form coming soon)',
         'The sign-up form is coming soon. Ask a club leader!', '🎉 See you at the next meeting!');
     });
-    var registerUrl = Site.get(site, 'links.hackathonForm', '');
-    Array.prototype.forEach.call(document.querySelectorAll('[data-register]'), function (btn) {
-      setupLinkButton(btn, registerUrl, 'Register your team', 'Registration opens soon',
-        'Registration is not open yet. Check back soon!', '🎮 See you at the hackathon!');
-    });
     var leaders = (site.leaders || []).map(function (l) {
       return Site.esc(l.name) + (l.role ? ' · ' + Site.esc(l.role) : '');
     }).join('  ·  ');
@@ -417,7 +358,7 @@
     if (footerLeaders) footerLeaders.innerHTML = leaders;
   }
 
-  // A button that celebrates and then opens the link, or says "coming soon" if the link is empty.
+  // The Join button: celebrates and then opens the form, or says "coming soon" if the link is empty.
   function setupLinkButton(btn, url, readyText, soonText, soonMessage, quietMessage) {
     var inHeader = btn.classList.contains('header-join');
     if (inHeader) { readyText = 'Join the club'; soonText = 'Join the club'; }

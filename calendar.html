@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Calendar — VibeCoding Club</title>
-  <meta name="description" content="Every VibeCoding Club meeting on one page: TALK days, WORK days, specials and the Blooket Hackathon. Tuesdays at Menlo School.">
-  <meta name="theme-color" content="#FFD53D">
+  <meta name="description" content="Every VibeCoding Club meeting on one page: TALK days, WORK days and specials. Tuesdays at Menlo School.">
+  <meta name="theme-color" content="#0A0E17">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -28,24 +28,23 @@
     .cal-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.7rem; }
     .ev {
       display: flex; align-items: flex-start; gap: 0.8rem;
-      background: var(--card); border: var(--border); border-left: 6px solid var(--line);
+      background: var(--surface); border: var(--border); border-left: 6px solid var(--line);
       border-radius: var(--radius-sm); padding: 0.7rem 0.9rem 0.7rem 0.75rem; box-shadow: var(--shadow-press);
     }
     /* the left edge repeats the chip color, so color is never the only signal */
-    .ev-talk      { border-left-color: var(--sky); }
-    .ev-work      { border-left-color: var(--tangerine); }
-    .ev-special   { border-left-color: var(--grape); }
-    .ev-hackathon { border-left-color: var(--sun); }
-    .ev-break     { border-left-color: var(--silver); border-left-style: dashed; color: var(--muted); background: var(--paper); box-shadow: none; }
+    .ev-talk      { border-left-color: var(--cyan); }
+    .ev-work      { border-left-color: var(--neon); }
+    .ev-special   { border-left-color: var(--purple); }
+    .ev-break     { border-left-color: var(--muted); border-left-style: dashed; color: var(--muted); background: var(--bg); box-shadow: none; }
 
     /* the compact date block: weekday on top, day number big */
     .ev-date {
       flex: 0 0 3.3rem; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 0.35rem 0; border: 2px solid var(--ink); border-radius: var(--radius-sm);
-      background: var(--paper); font-family: var(--font-display); line-height: 1; text-align: center;
+      padding: 0.35rem 0; border: 2px solid var(--line); border-radius: var(--radius-sm);
+      background: var(--bg); font-family: var(--font-display); line-height: 1; text-align: center;
     }
     .ev-break .ev-date { border-style: dashed; border-color: var(--muted); }
-    .ev-today .ev-date { background: var(--sun); }
+    .ev-today .ev-date { background: var(--neon); border-color: var(--neon); color: var(--dark); }
     .ev-wd { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
     .ev-day { font-size: 1.7rem; font-weight: 700; margin-top: 0.15rem; }
 
@@ -86,7 +85,7 @@
 </head>
 <body>
   <header id="site-header">
-    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="calendar.html">Calendar</a></p></noscript>
   </header>
 
   <main id="main-content">
@@ -110,7 +109,6 @@
         <li><span class="chip chip-talk">TALK day</span> <span class="legend-what">speakers, demos, short lessons</span></li>
         <li><span class="chip chip-work">WORK day</span> <span class="legend-what">open build time, show and tell</span></li>
         <li><span class="chip chip-special">Special</span> <span class="legend-what">guests and one-off surprises</span></li>
-        <li><span class="chip chip-hackathon">Hackathon</span> <span class="legend-what">the big build day with a prize</span></li>
       </ul>
     </section>
 

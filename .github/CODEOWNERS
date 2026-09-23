@@ -7,7 +7,7 @@
 # Points: a club leader reviews every change.
 /data/scoreboard.json   @AlexKindler
 
-# Links, room, time and hackathon facts: a wrong Join link is the worst small mistake.
+# Links, room and time: a wrong Join link is the worst small mistake.
 /data/site.json         @AlexKindler
 
 # The rulebook: the data checker, the workflow, the PR template and this file.

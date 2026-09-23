@@ -43,11 +43,11 @@ You can, and the page will mostly work, but the calendar and scoreboard sections
 ## 2. Where things are
 
 ```
-index.html, info.html, scoreboard.html, hackathon.html, calendar.html   one file per page
+index.html, info.html, scoreboard.html, calendar.html   one file per page
 css/style.css        the ONE shared stylesheet (page-only styles sit inside each page)
 js/shared.js         draws the header, menu and footer on every page, loads the data files
 js/home.js ...       one small script per page
-data/site.json       time, room, links, leader names, hackathon facts  <- fill-in-the-blanks
+data/site.json       time, room, links, leader names  <- fill-in-the-blanks
 data/events.json     the calendar
 data/scoreboard.json points, badges, and the "how to earn points" rules
 data/resources.json  links on the Info page
@@ -72,8 +72,6 @@ Open `data/events.json`. It looks like this:
 4. Optional extras: `"time": "12:30"` or `"room": "Library"` if a meeting is somewhere unusual, and `"tbd": true` while a date is still a guess (the calendar shows "date TBD" and the home page skips it).
 5. Regular meetings are on Tuesdays. The checker warns if a TALK, WORK or BREAK date lands on another weekday. SPECIAL events can be any day.
 
-The hackathon is **not** in this file. Its date lives in `data/site.json` and shows up on the calendar automatically.
-
 ---
 
 ## 4. Update the scoreboard
@@ -95,12 +93,11 @@ A club leader has to approve every change to this file (GitHub enforces it). Tha
 
 ---
 
-## 5. Change the time, room, links, or hackathon details
+## 5. Change the time, room, links, or leader names
 
-Everything with a blank in it lives in `data/site.json`: meeting time and room, the Join form link, the hackathon registration link, the school calendar link, leader names, and the hackathon date, prize, rules and judging.
+Everything with a blank in it lives in `data/site.json`: meeting time and room, the Join form link, the school clubs calendar link, and the leaders list (which can stay empty).
 
 - A link set to `""` shows a "coming soon" button instead of a broken one.
-- To start the hackathon countdown, set the real `date` and `time` and flip `"dateConfirmed": false` to `true`.
 - The checker warns about anything still marked `TBD`, so it doubles as the to-do list.
 
 ---
@@ -178,7 +175,7 @@ Do these once, in order, on GitHub.com under **Settings**:
    - **Require status checks to pass before merging**, and pick `check-data`
    - Leave "Do not allow bypassing the above settings" **unchecked**. A PR author can never approve their own PR, so with only one code owner your own points PRs could never merge without the admin bypass. The real fix is the next step.
 5. Add a second leader's GitHub handle after `@AlexKindler` on each line of `.github/CODEOWNERS`. Any one listed owner can approve.
-6. Fill in `data/site.json`: meeting time and room, the Join form link, the hackathon form link, the Menlo Clubs calendar link, and leader names. Delete the four sample members in `data/scoreboard.json`.
+6. Fill in `data/site.json`: meeting time and room, the Join form link, the Menlo Clubs calendar link, and leader names if you want them shown.
 
 **Approving a points change**: open the PR, click **Files changed**, read the one-line diff, **Review changes**, **Approve**, then **Merge pull request**.
 
@@ -186,4 +183,4 @@ Do these once, in order, on GitHub.com under **Settings**:
 
 ## Credits
 
-Fredoka font by the Fredoka Project Authors, SIL Open Font License (see `fonts/OFL.txt`). Logo and all art are original work by club members. This site is not affiliated with Blooket.
+JetBrains Mono font by the JetBrains Mono Project Authors, SIL Open Font License (see `fonts/OFL.txt`). Logo and all art are original work by club members. This site is not affiliated with Blooket.

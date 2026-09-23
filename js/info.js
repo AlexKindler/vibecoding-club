@@ -6,7 +6,7 @@
 (function () {
   'use strict';
 
-  // Who runs it: site.json has "leaders": [ { "name": "Alex K.", "role": "Club lead" } ].
+  // Who runs it: site.json has "leaders": [ { "name": "Ava K.", "role": "Club lead" } ] (or [] to show nobody).
   Site.section('#leaders', 'data/site.json', function (site) {
     var leaders = site.leaders || [];
     if (!leaders.length) return '<p>Ask anyone in the room. We are all friendly.</p>';
@@ -18,9 +18,9 @@
 
   // Which chip color a resource tag gets. Any other tag gets a plain chip.
   function tagClass(tag) {
-    if (tag === 'Learn') return 'chip-mint';
-    if (tag === 'AI tool') return 'chip-sky';
-    if (tag === 'This site') return 'chip-sun';
+    if (tag === 'Learn') return 'chip-neon';
+    if (tag === 'AI tool') return 'chip-cyan';
+    if (tag === 'This site') return 'chip-gold';
     return '';
   }
 

@@ -1,5 +1,5 @@
 /* js/calendar.js — fills the Calendar page. It reads data/events.json (one line per
- * meeting) and, through Site.allEvents(), adds the hackathon from data/site.json.
+ * meeting), grouped by month, with past meetings folded away.
  * Meetings from today onward are grouped under one heading per month; earlier ones
  * fold away under "Earlier this year". To change the words at the top of the page
  * or the legend, edit calendar.html. To change a meeting, edit data/events.json. */
@@ -7,7 +7,7 @@
   'use strict';
 
   // The class that colors a row's left edge (see the <style> block in calendar.html).
-  var ROW_CLASS = { TALK: 'ev-talk', WORK: 'ev-work', SPECIAL: 'ev-special', HACKATHON: 'ev-hackathon', BREAK: 'ev-break' };
+  var ROW_CLASS = { TALK: 'ev-talk', WORK: 'ev-work', SPECIAL: 'ev-special', BREAK: 'ev-break' };
 
 
   // 'Tue' and 22 for the compact date block.
@@ -47,7 +47,7 @@
       '</time>' +
       '<div class="ev-main">' +
         '<p class="ev-chips">' + Site.chip(type) +
-          (rel ? '<span class="chip chip-mint">' + Site.esc(rel) + '</span>' : '') +
+          (rel ? '<span class="chip chip-neon">' + Site.esc(rel) + '</span>' : '') +
         '</p>' +
         '<p class="ev-title">' + title + '</p>' +
         (e.description ? '<p class="ev-desc">' + Site.esc(e.description) + '</p>' : '') +

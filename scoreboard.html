@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Scoreboard — VibeCoding Club</title>
-  <meta name="description" content="Who is winning at VibeCoding Club: points for attending, demoing, building this site, and placing in the hackathon.">
-  <meta name="theme-color" content="#FFD53D">
+  <meta name="description" content="Who is winning at VibeCoding Club: points for attending, demoing, and building this site.">
+  <meta name="theme-color" content="#0A0E17">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -22,10 +22,13 @@
     .podium-card.pos-center { order: 2; }
     .podium-card.pos-left   { order: 1; }
     .podium-card.pos-right  { order: 3; }
-    .podium-card.rank-1 { background: var(--sun);    min-height: 200px; }
-    .podium-card.rank-2 { background: var(--silver); min-height: 170px; }
-    .podium-card.rank-3 { background: var(--bronze); min-height: 150px; }
-    .podium-card.rank-4, .podium-card.rank-5 { background: var(--card); min-height: 140px; }
+    .podium-empty { grid-column: 1 / -1; text-align: center; }
+    .podium-card { background: var(--surface); }
+    .podium-card.rank-1 { border-color: var(--gold);   box-shadow: var(--glow-gold); min-height: 200px; }
+    .podium-card.rank-2 { border-color: var(--silver); min-height: 170px; }
+    .podium-card.rank-3 { border-color: var(--bronze); min-height: 150px; }
+    .podium-card.rank-4, .podium-card.rank-5 { min-height: 140px; }
+    .podium .rank-1 .pts { color: var(--gold); }
     .podium .medal { font-size: 2.2rem; line-height: 1; }
     .podium .rank-1 .medal { animation: podium-bounce 0.7s ease-out 0.55s both; }
     .podium .name { font-family: var(--font-display); font-weight: 600; font-size: 1.05rem; overflow-wrap: anywhere; }
@@ -38,11 +41,11 @@
     /* The full ranking table. */
     .ranking {
       width: 100%; border-collapse: separate; border-spacing: 0;
-      background: var(--card); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+      background: var(--surface); border: var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
       overflow: hidden;
     }
     .ranking th, .ranking td { padding: 0.55rem 0.35rem; text-align: left; vertical-align: middle; border-bottom: 2px solid var(--line); }
-    .ranking th { font-family: var(--font-display); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; background: var(--paper); }
+    .ranking th { font-family: var(--font-display); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; background: var(--surface-2); color: var(--muted); }
     .ranking tbody tr:last-child td { border-bottom: 0; }
     .ranking .rank { width: 2.6rem; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
     .ranking .points { width: 4.2rem; text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -50,13 +53,13 @@
     @media (max-width: 359px) { .ranking .member { min-width: 0; } .ranking th, .ranking td { padding: 0.5rem 0.25rem; } }
     .ranking .badges { display: flex; flex-wrap: wrap; gap: 0.25rem; }
     .ranking .chip { font-size: 0.75rem; padding: 0.02rem 0.5rem; }
-    .ranking tbody tr.top-1 { background: rgba(255, 213, 61, 0.28); }
-    .ranking tbody tr.top-2 { background: rgba(215, 222, 232, 0.5); }
-    .ranking tbody tr.top-3 { background: rgba(232, 167, 107, 0.3); }
+    .ranking tbody tr.top-1 { background: rgba(255, 210, 63, 0.10); }
+    .ranking tbody tr.top-2 { background: rgba(196, 207, 224, 0.08); }
+    .ranking tbody tr.top-3 { background: rgba(229, 167, 106, 0.10); }
     .delta { font-size: 0.75rem; padding: 0 0.45rem; margin-left: 0.35rem; vertical-align: middle; animation: pop-in 0.3s ease-out 0.6s both; }
-    .delta-up   { background: var(--mint); }
-    .delta-down { background: var(--coral); }
-    .delta-new  { background: var(--sun); }
+    .delta-up   { background: var(--neon);  border-color: var(--neon);  color: var(--dark); }
+    .delta-down { background: var(--coral); border-color: var(--coral); color: var(--dark); }
+    .delta-new  { background: var(--gold);  border-color: var(--gold);  color: var(--dark); }
 
     .small { font-size: 0.95rem; }
     .badge-legend h3 { font-size: 1.05rem; margin: 0.8rem 0 0.2rem; }
@@ -71,13 +74,13 @@
 </head>
 <body>
   <header id="site-header">
-    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="calendar.html">Calendar</a></p></noscript>
   </header>
 
   <main id="main-content">
     <section class="board-top">
       <h1 class="reveal"><span aria-hidden="true">🏆</span> Scoreboard</h1>
-      <p class="muted reveal reveal-delay-1" id="updated">Points for showing up, demoing, building this site, and placing in the hackathon.</p>
+      <p class="muted reveal reveal-delay-1" id="updated">Points for showing up, demoing, and building this site.</p>
     </section>
 
     <section aria-labelledby="podium-title">
@@ -95,7 +98,7 @@
       <section class="card" aria-labelledby="earn-title">
         <h2 id="earn-title">How to earn points</h2>
         <div id="how-to-earn"><p class="muted">Loading the rules…</p></div>
-        <p class="muted small">Points and badges live in <code>data/scoreboard.json</code>. A club leader approves every change. <a href="hackathon.html">Hackathon placings are worth the most.</a></p>
+        <p class="muted small">Points and badges live in <code>data/scoreboard.json</code>. A club leader approves every change.</p>
       </section>
     </div>
   </main>

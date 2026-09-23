@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Info — VibeCoding Club</title>
   <meta name="description" content="What VibeCoding Club is, what vibe coding means, when we meet at Menlo School, how meetings work, answers to common questions, and links to get started.">
-  <meta name="theme-color" content="#FFD53D">
+  <meta name="theme-color" content="#0A0E17">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -18,15 +18,15 @@
     /* the tiny example chat: "You" bubbles on the right, "AI" bubbles on the left */
     .convo {
       display: flex; flex-direction: column; gap: 0.55rem; max-width: 34rem;
-      background: var(--card); border: var(--border); border-radius: var(--radius);
+      background: var(--surface); border: var(--border); border-radius: var(--radius);
       padding: 1rem; margin: 0 0 1rem; box-shadow: var(--shadow);
     }
     .convo p {
       margin: 0; max-width: 88%; padding: 0.5rem 0.9rem;
-      border: 2px solid var(--ink); border-radius: 18px;
+      border: 1px solid var(--line); border-radius: 18px;
     }
-    .convo .you { align-self: flex-end; background: var(--sun); border-bottom-right-radius: 6px; }
-    .convo .ai  { align-self: flex-start; background: var(--mint); border-bottom-left-radius: 6px; }
+    .convo .you { align-self: flex-end; background: var(--neon); color: var(--dark); border-color: var(--neon); border-bottom-right-radius: 6px; }
+    .convo .ai  { align-self: flex-start; background: var(--surface-2); border-bottom-left-radius: 6px; font-family: var(--font-display); font-size: 0.95rem; }
 
     /* when and where */
     .when-line { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; margin: 0 0 0.3rem; }
@@ -42,7 +42,7 @@
 
     /* FAQ: native <details>, no JS. The + in the circle turns into an x when open. */
     .faq {
-      background: var(--card); border: var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); border: var(--border); border-radius: var(--radius-sm);
       margin-bottom: 0.6rem; box-shadow: var(--shadow-press);
     }
     .faq summary {
@@ -51,11 +51,11 @@
       font-family: var(--font-display); font-weight: 600; font-size: 1.05rem;
     }
     .faq summary::-webkit-details-marker { display: none; }
-    @media (hover: hover) { .faq summary:hover { color: var(--grape); } }
+    @media (hover: hover) { .faq summary:hover { color: var(--neon); } }
     .faq summary::before {
       content: "+" / ""; flex-shrink: 0; width: 28px; height: 28px;
       display: grid; place-items: center; font-size: 1.3rem; line-height: 1;
-      background: var(--sun); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px;
+      background: var(--neon); color: var(--dark); border: 2px solid var(--neon); border-radius: 999px;
       transition: transform 0.2s ease;
     }
     .faq[open] summary::before { transform: rotate(45deg); }
@@ -65,7 +65,7 @@
     /* resources (drawn by js/info.js from data/resources.json) */
     .resource-list { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.8rem; }
     .resource {
-      background: var(--card); border: var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); border: var(--border); border-radius: var(--radius-sm);
       padding: 0.6rem 1rem 0.9rem; box-shadow: var(--shadow-press);
     }
     .resource .top { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0.7rem; }
@@ -82,7 +82,7 @@
 </head>
 <body>
   <header id="site-header">
-    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="calendar.html">Calendar</a></p></noscript>
   </header>
 
   <main id="main-content">
@@ -90,7 +90,7 @@
       <p class="eyebrow">Start here</p>
       <h1>What is VibeCoding Club?</h1>
       <p class="lead">We are a club at <span data-site="club.school">Menlo School</span> that builds real apps and games together using AI coding tools. You say what you want, the AI writes the code, and you steer, test and make it yours.</p>
-      <p>No experience needed. Bring curiosity (and your lunch). This November we are running the <a href="hackathon.html"><span data-site="hackathon.prize">$1,000</span> <span data-site="hackathon.name">Blooket Hackathon</span></a>, and every meeting you show up to earns you points on the <a href="scoreboard.html">scoreboard</a>.</p>
+      <p>No experience needed. Bring curiosity (and your lunch). Every meeting you show up to earns you points on the <a href="scoreboard.html">scoreboard</a>.</p>
     </section>
 
     <section class="vibe reveal reveal-delay-1" aria-labelledby="vibe-title">
@@ -111,7 +111,7 @@
       <p class="muted">At <span data-site="club.school">Menlo School</span>. Bring your lunch, and a laptop if you have one.</p>
       <h3 class="eyebrow">Who runs it</h3>
       <div id="leaders">
-        <ul class="leader-list" role="list"><li>Alex K. <span class="muted">· Club lead</span></li></ul>
+        <p>Ask anyone in the room. We are all friendly.</p>
       </div>
       <a class="btn" data-join href="#">Join the club</a>
     </section>

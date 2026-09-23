@@ -1,5 +1,5 @@
 {
-  "_help": "Every fill-in-the-blank for the site lives here. Change the words, keep the quotes and commas. A link set to \"\" shows a 'coming soon' button instead of a broken link. Dates are YYYY-MM-DD, times are 24-hour HH:MM.",
+  "_help": "Every fill-in-the-blank for the site lives here. Change the words, keep the quotes and commas. A link set to \"\" shows a 'coming soon' button instead of a broken link. leaders can be an empty list [] if you would rather not list names.",
   "club": {
     "name": "VibeCoding Club",
     "school": "Menlo School",
@@ -11,34 +11,9 @@
     "time": "Lunch (exact time TBD)",
     "room": "Room TBD"
   },
-  "leaders": [
-    { "name": "Alex K.", "role": "Club lead" }
-  ],
+  "leaders": [],
   "links": {
     "joinForm": "",
-    "hackathonForm": "",
     "schoolClubsCalendar": "https://www.menloschool.org/"
-  },
-  "hackathon": {
-    "name": "Blooket Hackathon",
-    "description": "A one-day build sprint. Teams use AI coding tools to make an original quiz game or classroom tool in the spirit of Blooket, then demo it live. $1,000 to the winners. Full details coming soon.",
-    "date": "2026-11-14",
-    "time": "09:00",
-    "dateConfirmed": false,
-    "where": "Room TBD",
-    "prize": "$1,000",
-    "teamSize": "Teams of 1 to 4",
-    "rules": [
-      "Original art and names only. No Blooket logos, characters or screenshots.",
-      "Any AI tool is allowed. Say which ones you used.",
-      "Code written before kickoff does not count.",
-      "Every team demos, finished or not."
-    ],
-    "judging": [
-      "Fun to play",
-      "Works without crashing",
-      "Originality",
-      "Demo quality"
-    ]
   }
 }

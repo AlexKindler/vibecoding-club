@@ -1,29 +1,7 @@
-/* js/home.js — fills the home page: hackathon banner, Next up card, top-3 preview.
+/* js/home.js — fills the home page: Next up card and top-3 preview.
  * Everything here reads from data/*.json. To change words on the page, edit index.html. */
 (function () {
   'use strict';
-
-  // Hackathon banner: reads site.json only (the countdown is shown in days on the home page).
-  Site.section('#hackathon-banner', 'data/site.json', function (site) {
-    var h = site.hackathon || {};
-    var line = document.querySelector('#hackathon-banner .banner-line');
-    var eyebrow = document.querySelector('#hackathon-banner .eyebrow');
-    var prize = document.querySelector('#hackathon-banner strong');
-    if (eyebrow) eyebrow.innerHTML = '<span aria-hidden="true">🎮</span> ' + Site.esc(h.name || 'Hackathon');
-    if (prize) prize.textContent = (h.prize || '') + ' prize';
-    if (!line) return;
-
-    var month = h.date ? Site.formatDate(h.date, 'month') : 'Date coming soon';
-    Site.countdown(site, function (status) {
-      var text;
-      if (status.state === 'tbd') text = month + ' · exact date coming soon';
-      else if (status.state === 'counting') text = 'Kickoff in ' + status.days + ' days, ' + status.hours + ' hours';
-      else if (status.state === 'live') text = 'Happening now!';
-      else text = 'See the results on the scoreboard';
-      line.innerHTML = Site.esc(text) + ' <span aria-hidden="true">→</span>';
-    }, 30000);
-    // return nothing: we edited the banner in place instead of replacing it
-  });
 
   // Next up: the next real meeting from events.json (skips BREAK weeks and TBD dates).
   Site.section('#next-up-body', 'data/events.json', function (data, site) {
@@ -36,7 +14,7 @@
     var room = next.room || Site.get(site, 'meeting.room', 'Room TBD');
     return '' +
       '<div class="chips">' + Site.chip(next.type) +
-        (rel ? '<span class="chip chip-mint">' + Site.esc(rel) + '</span>' : '') +
+        (rel ? '<span class="chip chip-neon">' + Site.esc(rel) + '</span>' : '') +
       '</div>' +
       '<h3>' + Site.esc(next.title) + '</h3>' +
       '<p class="when">' + Site.esc(Site.formatDate(next.date, 'long')) + ' · ' + Site.esc(time) + ' · ' + Site.esc(room) + '</p>' +

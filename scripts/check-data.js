@@ -31,8 +31,8 @@ const path = require('path');
 const ROOT = path.resolve(__dirname, '..');
 const ON_GITHUB = process.env.GITHUB_ACTIONS === 'true';
 const EVENT_TYPES = ['TALK', 'WORK', 'SPECIAL', 'BREAK'];
-const POINT_CATEGORIES = ['attend', 'demo', 'site', 'hackathon'];
-const BADGE_COLORS = ['sun', 'tangerine', 'mint', 'coral', 'sky', 'grape'];
+const POINT_CATEGORIES = ['attend', 'demo', 'site'];
+const BADGE_COLORS = ['neon', 'cyan', 'purple', 'gold', 'coral'];
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const HANDLE = /^[\p{L}\p{N}][\p{L}\p{N}_.-]{1,23}$/u;
 const FIRST_NAME_LAST_INITIAL = /^[\p{Lu}][\p{L}'-]{0,20}(?: [\p{Lu}][\p{L}'-]{0,20})? [\p{Lu}]\.$/u; // Ava K. or Mary Jane K.
@@ -164,8 +164,8 @@ function checkSite(file, data, loc) {
   const meeting = section(file, loc, data, 'meeting');
   if (meeting) requireTexts(file, loc, meeting, ['day', 'time', 'room'], 'meeting');
 
-  if (!Array.isArray(data.leaders) || data.leaders.length === 0) {
-    error(file, lineOf(loc, 'leaders'), 'leaders should be a list with at least one entry, like [{ "name": "Ava K.", "role": "Club lead" }]');
+  if (!Array.isArray(data.leaders)) {
+    error(file, lineOf(loc, 'leaders'), 'leaders should be a list: [] for nobody, or [{ "name": "Ava K.", "role": "Club lead" }]');
   } else {
     data.leaders.forEach((leader, i) => {
       const hasName = isObject(leader) && isFilledText(leader.name);
@@ -177,29 +177,16 @@ function checkSite(file, data, loc) {
 
   const links = section(file, loc, data, 'links');
   if (links) {
-    for (const key of ['joinForm', 'hackathonForm', 'schoolClubsCalendar']) {
+    for (const key of ['joinForm', 'schoolClubsCalendar']) {
       const line = fieldLine(loc, links, key, 'links');
       const value = links[key];
       if (!isText(value)) error(file, line, `links.${key} should be a web address in quotes, or "" if you do not have it yet`);
-      else if (value === '' && key !== 'schoolClubsCalendar') warn(file, line, `links.${key} is empty, so the ${key === "joinForm" ? "Join" : "Register"} button will say coming soon until you paste the form link`);
+      else if (value === '' && key !== 'schoolClubsCalendar') warn(file, line, `links.${key} is empty, so the Join button will say coming soon until you paste the form link`);
       else if (key === 'schoolClubsCalendar' && !/club/i.test(value)) warn(file, line, `links.schoolClubsCalendar looks like a placeholder (${value || 'empty'}); paste the Menlo Clubs calendar address`);
       else if (value !== '' && !value.startsWith('https://')) error(file, line, `links.${key} should start with https:// (copy the full address from your browser)`);
     }
   }
 
-  const hack = section(file, loc, data, 'hackathon');
-  if (!hack) return;
-  requireTexts(file, loc, hack, ['name', 'description'], 'hackathon');
-  if (!parseDate(hack.date)) error(file, fieldLine(loc, hack, 'date', 'hackathon'), 'hackathon.date should be a real date written YYYY-MM-DD, like "2026-11-14"');
-  if (!isTime(hack.time)) error(file, fieldLine(loc, hack, 'time', 'hackathon'), 'hackathon.time should be 24-hour HH:MM in quotes, like "09:00"');
-  if (typeof hack.dateConfirmed !== 'boolean') error(file, fieldLine(loc, hack, 'dateConfirmed', 'hackathon'), 'hackathon.dateConfirmed should be true or false, with no quotes');
-  requireTexts(file, loc, hack, ['where', 'prize', 'teamSize'], 'hackathon');
-  for (const key of ['rules', 'judging']) {
-    const list = hack[key];
-    if (!Array.isArray(list) || list.length === 0 || !list.every(isFilledText)) {
-      error(file, fieldLine(loc, hack, key, 'hackathon'), `hackathon.${key} should be a list of at least one sentence in quotes, separated by commas`);
-    }
-  }
 }
 
 // ---------- data/events.json ----------
@@ -249,7 +236,7 @@ function checkScoreboard(file, data, loc) {
       const label = `howToEarn entry #${i + 1}`;
       const line = lineOf(loc, isObject(row) && isFilledText(row.what) ? row.what : 'howToEarn');
       if (!isObject(row)) { error(file, line, `${label} should be an object between { and }`); return; }
-      if (!POINT_CATEGORIES.includes(row.category)) error(file, line, `${label} has category "${row.category}"; use attend, demo, site or hackathon`);
+      if (!POINT_CATEGORIES.includes(row.category)) error(file, line, `${label} has category "${row.category}"; use attend, demo or site`);
       if (!isFilledText(row.what)) error(file, line, `${label} needs a "what" in quotes that says how to earn the points`);
       if (!Number.isInteger(row.points) || row.points < 0) error(file, line, `${label} needs "points" as a whole number with no quotes, 0 or more`);
     });
@@ -260,7 +247,7 @@ function checkScoreboard(file, data, loc) {
   for (const id of badgeIds) {
     const badge = badges[id];
     const line = lineOf(loc, id);
-    if (!isObject(badge)) { error(file, line, `badge "${id}" should be an object like { "label": "Demo Star", "color": "sun", "how": "Demoed on a Work Day" }`); continue; }
+    if (!isObject(badge)) { error(file, line, `badge "${id}" should be an object like { "label": "Demo Star", "color": "gold", "how": "Demoed on a Work Day" }`); continue; }
     if (!isFilledText(badge.label)) error(file, line, `badge "${id}" needs a label in quotes`);
     if (!BADGE_COLORS.includes(badge.color)) error(file, line, `badge "${id}" has color "${badge.color}"; pick one of ${BADGE_COLORS.join(', ')}`);
     if (!isText(badge.how)) error(file, line, `badge "${id}" needs a "how" in quotes explaining how to earn it`);

@@ -53,13 +53,13 @@
   Site.section('#updated', 'data/scoreboard.json', function (data) {
     if (!data.updated) return;
     return 'Last updated ' + Site.esc(Site.formatDate(data.updated, 'full')) +
-      '. Points for showing up, demoing, building this site, and placing in the hackathon.';
+      '. Points for showing up, demoing, and building this site.';
   });
 
   // Podium: first three of the ranked list. Visual order is 2nd, 1st, 3rd; 1st lands last.
   Site.section('#podium', 'data/scoreboard.json', function (data) {
     var top = Site.rankMembers(data.members).slice(0, 3);
-    if (!top.length) return '<p class="card">No points yet. Come to a meeting to get on the board!</p>';
+    if (!top.length) return '<p class="card podium-empty">No points yet. Come to a meeting to get on the board!</p>';
     var position = ['pos-center', 'pos-left', 'pos-right'];
     var delay = [3, 2, 1];
     return top.map(function (m, i) {
@@ -102,7 +102,7 @@
     if (!rules.length) return '<p>Rules coming soon.</p>';
     var html = '<ul class="earn-list" role="list">' + rules.map(function (r) {
       return '<li><span class="what">' + Site.esc(r.what) + '</span>' +
-        '<span class="chip chip-sun">+' + Site.esc(r.points) + '</span></li>';
+        '<span class="chip chip-gold">+' + Site.esc(r.points) + '</span></li>';
     }).join('') + '</ul>';
     // Badge legend: what each chip on the board means (phones cannot show tooltips).
     var ids = Object.keys(data.badges || {});

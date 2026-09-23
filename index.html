@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>VibeCoding Club at Menlo School</title>
   <meta name="description" content="Build real apps and games with AI coding tools. No experience needed. Tuesdays at Menlo School.">
-  <meta name="theme-color" content="#FFD53D">
+  <meta name="theme-color" content="#0A0E17">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -13,20 +13,9 @@
     .hero { text-align: center; padding: 1.5rem 0 1rem; }
     .hero img { width: 96px; height: 96px; }
     .hero h1 { margin-top: 0.5rem; }
-    .hero .pitch { font-size: 1.2rem; max-width: 34ch; margin: 0 auto 1.3rem; }
+    .hero .pitch { font-family: var(--font-display); font-size: 1.05rem; max-width: 40ch; margin: 0 auto 1.3rem; color: var(--muted); }
+    .hero .pitch::before { content: "> " / ""; color: var(--neon); }
     .hero .meta { margin-top: 1rem; }
-
-    .banner-link {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem 1rem;
-      background: var(--grape); color: #fff; text-decoration: none;
-      border: var(--border); border-radius: var(--radius); padding: 1rem 1.2rem;
-      box-shadow: var(--shadow); transition: transform 0.12s ease;
-    }
-    .banner-link:hover { color: #fff; }
-    @media (hover: hover) { .banner-link:hover { transform: translateY(-2px); } }
-    .banner-link .eyebrow { color: #fff; width: 100%; margin: 0; }
-    .banner-link strong { font-family: var(--font-display); font-size: 1.5rem; }
-    .banner-link .banner-line { margin-left: auto; font-weight: 600; }
 
     .next-up h3 { font-size: 1.5rem; margin: 0.6rem 0 0.2rem; }
     .next-up .when { font-weight: 600; margin-bottom: 0.4rem; }
@@ -35,15 +24,15 @@
     .top3 { list-style: none; padding: 0; margin: 0 0 1rem; display: grid; gap: 0.6rem; }
     .top3 li {
       display: flex; align-items: center; gap: 0.7rem;
-      background: var(--card); border: var(--border); border-radius: var(--radius-sm);
+      background: var(--surface); border: var(--border); border-radius: var(--radius-sm);
       padding: 0.6rem 0.9rem; box-shadow: var(--shadow-press);
     }
     .top3 .medal { font-size: 1.6rem; }
     .top3 .name { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; flex: 1; min-width: 0; overflow-wrap: anywhere; }
     .top3 .pts { font-weight: 700; }
-    .top3 li.rank-1 { background: var(--sun); }
-    .top3 li.rank-2 { background: var(--silver); }
-    .top3 li.rank-3 { background: var(--bronze); }
+    .top3 li.rank-1 { border-color: var(--gold); box-shadow: var(--glow-gold); }
+    .top3 li.rank-2 { border-color: var(--silver); }
+    .top3 li.rank-3 { border-color: var(--bronze); }
 
     @media (min-width: 700px) {
       .home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
@@ -53,26 +42,18 @@
 </head>
 <body>
   <header id="site-header">
-    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="hackathon.html">Hackathon</a> · <a href="calendar.html">Calendar</a></p></noscript>
+    <noscript><p><a href="index.html">Home</a> · <a href="info.html">Info</a> · <a href="scoreboard.html">Scoreboard</a> · <a href="calendar.html">Calendar</a></p></noscript>
   </header>
 
   <main id="main-content">
     <section class="hero">
       <img class="reveal-pop" src="img/logo.svg" alt="" width="96" height="96">
       <h1 class="reveal">VibeCoding Club</h1>
-      <p class="pitch reveal reveal-delay-1" data-site="club.pitch">Build real apps and games with AI coding tools. No experience needed.</p>
+      <p class="pitch reveal reveal-delay-1"><span data-site="club.pitch">Build real apps and games with AI coding tools. No experience needed.</span><span class="cursor" aria-hidden="true"></span></p>
       <a class="btn btn-big reveal reveal-delay-2" data-join href="#">Join the club</a>
       <p class="meta muted reveal reveal-delay-3">
         <span data-site="meeting.day">Tuesdays</span> · <span data-site="meeting.time">Lunch</span> · <span data-site="meeting.room">Room TBD</span> · <span data-site="club.school">Menlo School</span>
       </p>
-    </section>
-
-    <section id="hackathon-banner" class="reveal reveal-delay-3" aria-label="Blooket Hackathon">
-      <a class="banner-link" href="hackathon.html">
-        <span class="eyebrow"><span aria-hidden="true">🎮</span> Blooket Hackathon</span>
-        <strong>$1,000 prize</strong>
-        <span class="banner-line">November 2026 · details soon</span>
-      </a>
     </section>
 
     <div class="home-grid">
