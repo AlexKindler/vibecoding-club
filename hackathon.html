@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Blooket Hackathon — VibeCoding Club</title>
   <meta name="description" content="The VibeCoding Club Blooket Hackathon: a one-day build sprint in November with a $1,000 prize. Rules, judging, team size, and registration.">
   <meta name="theme-color" content="#FFD53D">
@@ -24,21 +24,19 @@
     .register { margin: 0.6rem 0 0.5rem; }
 
     /* Countdown tiles */
-    .countdown { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    .countdown { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.5rem; }
+    .countdown.no-seconds { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 359px) { .tile .lbl { font-size: 0.65rem; letter-spacing: 0.02em; } }
     .tile {
       background: var(--grape); color: #fff; border: var(--border); border-radius: var(--radius-sm);
       padding: 0.7rem 0.2rem 0.6rem; text-align: center; box-shadow: var(--shadow);
     }
     .tile .num { display: block; font-family: var(--font-display); font-weight: 700; line-height: 1; font-size: clamp(1.7rem, 9vw, 3rem); font-variant-numeric: tabular-nums; }
-    .tile .lbl { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.35rem; }
+    .tile .lbl { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.35rem; }
     .status-card { text-align: center; }
     .status-card .big { font-size: 2.6rem; line-height: 1; margin-bottom: 0.4rem; }
     .status-card > :last-child { margin-bottom: 0; }
 
-    .earn-list { list-style: none; padding: 0; margin: 0 0 0.8rem; }
-    .earn-list li { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0; border-bottom: 2px dashed var(--line); }
-    .earn-list li:last-child { border-bottom: 0; }
-    .earn-list .what { flex: 1; }
     .two-col { display: grid; gap: 1.5rem; }
     .two-col ol, .two-col ul { margin-bottom: 0; }
     .two-col li + li { margin-top: 0.4rem; }
@@ -57,7 +55,7 @@
 
   <main id="main-content">
     <section class="hack-hero">
-      <p class="eyebrow reveal">Event</p>
+      <p class="eyebrow reveal">The big one</p>
       <h1 class="reveal" data-site="hackathon.name">Blooket Hackathon</h1>
       <p class="prize reveal-pop reveal-delay-1"><span aria-hidden="true">🏆</span> <span data-site="hackathon.prize">$1,000</span> prize</p>
       <p class="pitch reveal reveal-delay-2" data-site="hackathon.description">A one-day build sprint. Teams use AI coding tools to make an original quiz game or classroom tool in the spirit of Blooket, then demo it live. $1,000 to the winners. Full details coming soon.</p>
@@ -109,14 +107,15 @@
 
     <section class="card" aria-labelledby="art-title">
       <h2 id="art-title">Original art only</h2>
-      <p>No Blooket logos, characters or screenshots. The theme is the spirit of the game, not its assets. Draw your own, generate your own, or keep it simple.</p>
-      <p><a href="calendar.html">Back to the calendar</a></p>
+      <p>The theme is the spirit of the game, not its assets. Draw your own, generate your own, or keep it simple.</p>
+      <p><a href="calendar.html">See the whole calendar</a></p>
     </section>
   </main>
 
   <footer id="site-footer"></footer>
 
   <script src="js/shared.js"></script>
+  <script src="js/celebrate.js"></script>
   <script src="js/hackathon.js"></script>
 </body>
 </html>

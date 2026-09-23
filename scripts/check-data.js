@@ -10,7 +10,7 @@
   GitHub Pages: no absolute paths, no module scripts, every local link points
   at a file that really exists with the same capitalization, no file over 500 KB.
 
-  How to run: node scripts/check-data.js (from any folder inside the repo).
+  How to run: node scripts/check-data.js, from the vibecoding-club folder (the one with index.html).
   The GitHub Action runs the same command on every pull request. ERROR lines
   fail the run; WARN lines are reminders (placeholders, empty links, a meeting
   on the wrong weekday) and never fail it, so each run doubles as a to-do list.
@@ -35,7 +35,7 @@ const POINT_CATEGORIES = ['attend', 'demo', 'site', 'hackathon'];
 const BADGE_COLORS = ['sun', 'tangerine', 'mint', 'coral', 'sky', 'grape'];
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const HANDLE = /^[\p{L}\p{N}][\p{L}\p{N}_.-]{1,23}$/u;
-const FIRST_NAME_LAST_INITIAL = /^[\p{Lu}][\p{L}'-]{0,20} [\p{Lu}]\.$/u;
+const FIRST_NAME_LAST_INITIAL = /^[\p{Lu}][\p{L}'-]{0,20}(?: [\p{Lu}][\p{L}'-]{0,20})? [\p{Lu}]\.$/u; // Ava K. or Mary Jane K.
 const MAX_FILE_BYTES = 500 * 1024;
 const SKIP_FOLDERS = ['.git', 'node_modules'];
 
@@ -171,6 +171,7 @@ function checkSite(file, data, loc) {
       const hasName = isObject(leader) && isFilledText(leader.name);
       const line = lineOf(loc, hasName ? leader.name : 'leaders');
       if (!hasName || !isFilledText(leader.role)) error(file, line, `leaders entry #${i + 1} needs both a name and a role in quotes, like { "name": "Ava K.", "role": "Club lead" }`);
+      else if (!HANDLE.test(leader.name) && !FIRST_NAME_LAST_INITIAL.test(leader.name)) error(file, line, `leader "${leader.name}": use first name + last initial (Ava K.) or a handle; never a full name or email, this site is public`);
     });
   }
 
@@ -181,6 +182,7 @@ function checkSite(file, data, loc) {
       const value = links[key];
       if (!isText(value)) error(file, line, `links.${key} should be a web address in quotes, or "" if you do not have it yet`);
       else if (value === '' && key !== 'schoolClubsCalendar') warn(file, line, `links.${key} is empty, so the ${key === "joinForm" ? "Join" : "Register"} button will say coming soon until you paste the form link`);
+      else if (key === 'schoolClubsCalendar' && !/club/i.test(value)) warn(file, line, `links.schoolClubsCalendar looks like a placeholder (${value || 'empty'}); paste the Menlo Clubs calendar address`);
       else if (value !== '' && !value.startsWith('https://')) error(file, line, `links.${key} should start with https:// (copy the full address from your browser)`);
     }
   }
@@ -230,6 +232,8 @@ function checkEvents(file, data, loc) {
     if (['TALK', 'WORK', 'BREAK'].includes(entry.type) && date.getDay() !== 2) {
       warn(file, line, `${entry.date} is a ${WEEKDAYS[date.getDay()]}, not a Tuesday; double-check the date (only SPECIAL events may be on another day)`);
     }
+    if ('tbd' in entry && typeof entry.tbd !== 'boolean') error(file, line, `${entry.date}: tbd should be true or false (no quotes)`);
+    if (entry.tbd === true) warn(file, line, `"${entry.title}" on ${entry.date} is marked tbd, so the site shows "date TBD" and skips it in Next up; remove the tbd line once the date is confirmed`);
   });
 }
 
@@ -311,7 +315,8 @@ function checkPlaceholders(file, value, loc) {
   if (typeof value === 'string') {
     if (value.includes('TBD') || value.includes('TODO')) warn(file, lineOf(loc, value), `"${shorten(value)}" is still a placeholder; replace it when you know the real answer`);
   } else if (value && typeof value === 'object') {
-    for (const child of Object.values(value)) checkPlaceholders(file, child, loc);
+    // _help strings explain the rules (and may mention TBD), so they are not placeholders themselves
+    for (const [key, child] of Object.entries(value)) if (key !== '_help') checkPlaceholders(file, child, loc);
   }
 }
 
@@ -345,7 +350,12 @@ function checkRepoHygiene() {
 // baseDir is the folder relative links are measured from: the repo root for pages and
 // for js/ (a script's links are relative to the page that loads it), the css folder for style.css.
 function checkSourceFile(file, baseDir) {
-  const text = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  const raw = fs.readFileSync(path.join(ROOT, file), 'utf8');
+  // Blank out comments (keeping line breaks) so a comment that EXPLAINS the rules does not trip them.
+  const blank = (m) => m.replace(/[^\n]/g, ' ');
+  const text = file.endsWith('.html')
+    ? raw.replace(/<!--[\s\S]*?-->/g, blank)
+    : raw.replace(/\/\*[\s\S]*?\*\//g, blank).replace(/^\s*\/\/.*$/gm, blank);
   let m;
   ABSOLUTE_PATH.lastIndex = 0;
   while ((m = ABSOLUTE_PATH.exec(text))) {

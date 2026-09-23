@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Info — VibeCoding Club</title>
   <meta name="description" content="What VibeCoding Club is, what vibe coding means, when we meet at Menlo School, how meetings work, answers to common questions, and links to get started.">
   <meta name="theme-color" content="#FFD53D">
@@ -51,9 +51,9 @@
       font-family: var(--font-display); font-weight: 600; font-size: 1.05rem;
     }
     .faq summary::-webkit-details-marker { display: none; }
-    .faq summary:hover { color: var(--grape); }
+    @media (hover: hover) { .faq summary:hover { color: var(--grape); } }
     .faq summary::before {
-      content: "+"; flex-shrink: 0; width: 28px; height: 28px;
+      content: "+" / ""; flex-shrink: 0; width: 28px; height: 28px;
       display: grid; place-items: center; font-size: 1.3rem; line-height: 1;
       background: var(--sun); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px;
       transition: transform 0.2s ease;
@@ -111,7 +111,7 @@
       <p class="muted">At <span data-site="club.school">Menlo School</span>. Bring your lunch, and a laptop if you have one.</p>
       <h3 class="eyebrow">Who runs it</h3>
       <div id="leaders">
-        <ul class="leader-list"><li>Alex K. <span class="muted">· Club lead</span></li></ul>
+        <ul class="leader-list" role="list"><li>Alex K. <span class="muted">· Club lead</span></li></ul>
       </div>
       <a class="btn" data-join href="#">Join the club</a>
     </section>
@@ -171,6 +171,7 @@
   <footer id="site-footer"></footer>
 
   <script src="js/shared.js"></script>
+  <script src="js/celebrate.js"></script>
   <script src="js/info.js"></script>
 </body>
 </html>

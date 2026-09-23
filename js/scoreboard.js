@@ -12,9 +12,10 @@
   function badgeChips(ids, badges) {
     return (ids || []).map(function (id) {
       var badge = badges && badges[id];
-      if (!badge) return '<span class="chip" title="Unknown badge id: ' + Site.esc(id) + '">?</span>';
+      if (!badge) return '<span class="chip">? ' + Site.esc(id) + '</span>';
       return '<span class="chip chip-' + Site.esc(badge.color) + '" title="' + Site.esc(badge.how || '') + '">' +
-        Site.esc(badge.label || id) + '</span>';
+        Site.esc(badge.label || id) +
+        (badge.how ? '<span class="visually-hidden">: ' + Site.esc(badge.how) + '</span>' : '') + '</span>';
     }).join('');
   }
 
@@ -44,7 +45,7 @@
   function countUpAll(selector) {
     var nodes = document.querySelectorAll(selector + ' [data-count]');
     Array.prototype.forEach.call(nodes, function (el) {
-      Site.countUp(el, el.getAttribute('data-count'), 700);
+      if (Site.countUp) Site.countUp(el, el.getAttribute('data-count'), 700);
     });
   }
 
@@ -99,9 +100,19 @@
   Site.section('#how-to-earn', 'data/scoreboard.json', function (data) {
     var rules = data.howToEarn || [];
     if (!rules.length) return '<p>Rules coming soon.</p>';
-    return '<ul class="earn-list">' + rules.map(function (r) {
+    var html = '<ul class="earn-list" role="list">' + rules.map(function (r) {
       return '<li><span class="what">' + Site.esc(r.what) + '</span>' +
         '<span class="chip chip-sun">+' + Site.esc(r.points) + '</span></li>';
     }).join('') + '</ul>';
+    // Badge legend: what each chip on the board means (phones cannot show tooltips).
+    var ids = Object.keys(data.badges || {});
+    if (ids.length) {
+      html += '<div class="badge-legend"><h3>Badges</h3><ul class="earn-list" role="list">' + ids.map(function (id) {
+        var b = data.badges[id];
+        return '<li><span class="chip chip-' + Site.esc(b.color) + '">' + Site.esc(b.label || id) + '</span>' +
+          '<span class="what">' + Site.esc(b.how || '') + '</span></li>';
+      }).join('') + '</ul></div>';
+    }
+    return html;
   });
 })();

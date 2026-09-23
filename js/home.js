@@ -9,20 +9,18 @@
     var line = document.querySelector('#hackathon-banner .banner-line');
     var eyebrow = document.querySelector('#hackathon-banner .eyebrow');
     var prize = document.querySelector('#hackathon-banner strong');
-    if (eyebrow) eyebrow.textContent = '🎮 ' + (h.name || 'Hackathon');
+    if (eyebrow) eyebrow.innerHTML = '<span aria-hidden="true">🎮</span> ' + Site.esc(h.name || 'Hackathon');
     if (prize) prize.textContent = (h.prize || '') + ' prize';
     if (!line) return;
 
+    var month = h.date ? Site.formatDate(h.date, 'month') : 'Date coming soon';
     Site.countdown(site, function (status) {
-      if (status.state === 'tbd') {
-        line.textContent = 'November 2026 · exact date coming soon';
-      } else if (status.state === 'counting') {
-        line.textContent = 'Kickoff in ' + status.days + 'd ' + status.hours + 'h ' + status.minutes + 'm →';
-      } else if (status.state === 'live') {
-        line.textContent = 'Happening now! →';
-      } else {
-        line.textContent = 'See the results on the scoreboard →';
-      }
+      var text;
+      if (status.state === 'tbd') text = month + ' · exact date coming soon';
+      else if (status.state === 'counting') text = 'Kickoff in ' + status.days + ' days, ' + status.hours + ' hours';
+      else if (status.state === 'live') text = 'Happening now!';
+      else text = 'See the results on the scoreboard';
+      line.innerHTML = Site.esc(text) + ' <span aria-hidden="true">→</span>';
     }, 30000);
     // return nothing: we edited the banner in place instead of replacing it
   });
@@ -34,7 +32,7 @@
       return '<p>No meetings on the calendar yet. Check the <a href="calendar.html">calendar</a> soon.</p>';
     }
     var rel = Site.relativeDay(next.date);
-    var time = next.time || Site.get(site, 'meeting.time', 'Lunch');
+    var time = Site.formatTime(next.time || Site.get(site, 'meeting.time', 'Lunch'));
     var room = next.room || Site.get(site, 'meeting.room', 'Room TBD');
     return '' +
       '<div class="chips">' + Site.chip(next.type) +
@@ -51,7 +49,7 @@
     var top = Site.rankMembers(data.members).slice(0, 3);
     if (!top.length) return '<p>No points yet. Come to a meeting to get on the board!</p>';
     var medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
-    return '<ol class="top3">' + top.map(function (m, i) {
+    return '<ol class="top3" role="list">' + top.map(function (m, i) {
       return '<li class="rank-' + m.rank + ' reveal reveal-delay-' + (i + 1) + '">' +
         '<span class="medal" aria-hidden="true">' + (medals[m.rank] || '') + '</span>' +
         '<span class="visually-hidden">Rank ' + m.rank + ':</span>' +

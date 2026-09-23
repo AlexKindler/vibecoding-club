@@ -2,11 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Page not found — VibeCoding Club</title>
   <meta name="description" content="That page wandered off. Head back to the VibeCoding Club home page.">
   <meta name="robots" content="noindex">
   <meta name="theme-color" content="#FFD53D">
+  <script>
+    /* GitHub Pages shows this page at whatever address was missing, even a nested one
+       like /vibecoding-club/some/typo, so point every relative link back at the site root. */
+    (function () {
+      var base = document.createElement('base');
+      var onPages = location.pathname.indexOf('/vibecoding-club/') === 0;
+      base.href = onPages ? '/vibecoding-club/' : '/';
+      document.head.appendChild(base);
+    })();
+  </script>
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <style>
@@ -35,5 +45,6 @@
   <footer id="site-footer"></footer>
 
   <script src="js/shared.js"></script>
+  <script src="js/celebrate.js"></script>
 </body>
 </html>

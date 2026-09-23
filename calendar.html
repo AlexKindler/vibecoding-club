@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Calendar — VibeCoding Club</title>
   <meta name="description" content="Every VibeCoding Club meeting on one page: TALK days, WORK days, specials and the Blooket Hackathon. Tuesdays at Menlo School.">
   <meta name="theme-color" content="#FFD53D">
@@ -64,7 +64,7 @@
       list-style: none; padding: 0.4rem 0.3rem; border-radius: var(--radius-sm);
     }
     .past summary::-webkit-details-marker { display: none; }
-    .past-arrow { font-size: 0.85rem; transition: transform 0.15s ease; }
+    .past-arrow { display: inline-block; font-size: 0.85rem; transition: transform 0.15s ease; }
     .past[open] .past-arrow { transform: rotate(90deg); }
     .past summary h2 { margin: 0; font-size: 1.4rem; }
     .past .cal-month { font-size: 1.2rem; margin-top: 1.2rem; }
@@ -125,6 +125,7 @@
   <footer id="site-footer"></footer>
 
   <script src="js/shared.js"></script>
+  <script src="js/celebrate.js"></script>
   <script src="js/calendar.js"></script>
 </body>
 </html>

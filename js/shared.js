@@ -28,7 +28,6 @@
     { href: 'calendar.html',   label: 'Calendar',  icon: '📅' }
   ];
 
-  var CONFETTI_COLORS = ['#FFD53D', '#FF8A00', '#34D399', '#FF6B6B', '#2A5BD7', '#6D28D9'];
   var PREVIEW_COMMAND = 'python3 -m http.server 8000';
 
   // Used when data/site.json cannot be loaded, so the page still makes sense.
@@ -68,8 +67,9 @@
 
   // 'index.html', 'calendar.html', ...
   Site.currentPage = function () {
-    var last = location.pathname.split('/').pop();
-    return last === '' ? 'index.html' : last;
+    // GitHub Pages also serves 'scoreboard' for scoreboard.html, so ignore the ending.
+    var last = location.pathname.split('/').pop().replace(/\.html$/, '');
+    return (last === '' ? 'index' : last) + '.html';
   };
 
   /* ======================= dates ======================= */
@@ -98,6 +98,15 @@
     if (style === 'month') options = { month: 'long', year: 'numeric' };
     if (style === 'full') options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
     return date.toLocaleDateString('en-US', options);
+  };
+
+  // '09:00' -> '9:00 AM', '12:30' -> '12:30 PM'. Anything else ('Lunch') comes back unchanged.
+  Site.formatTime = function (value) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(String(value || ''));
+    if (!m) return value || '';
+    var hours = Number(m[1]);
+    var suffix = hours >= 12 ? 'PM' : 'AM';
+    return ((hours % 12) || 12) + ':' + m[2] + ' ' + suffix;
   };
 
   // Whole days from today to the date: 0 = today, 1 = tomorrow, -1 = yesterday.
@@ -262,12 +271,21 @@
     var h = (site && site.hackathon) || {};
     if (!h.dateConfirmed || !h.date) return { state: 'tbd' };
     var target = Site.parseLocalDate(h.date, h.time || '09:00');
-    var diff = target - (now || new Date());
+    now = now || new Date();
+    var diff = target - now;
     if (diff > 0) {
-      var s = Math.floor(diff / 1000);
+      // Count whole calendar days first, so the clock change in November does not shift the hours.
+      var cursor = new Date(now), days = 0;
+      for (;;) {
+        var next = new Date(cursor);
+        next.setDate(next.getDate() + 1);
+        if (next > target) break;
+        cursor = next; days++;
+      }
+      var s = Math.floor((target - cursor) / 1000);
       return {
         state: 'counting', target: target,
-        days: Math.floor(s / 86400), hours: Math.floor((s % 86400) / 3600),
+        days: days, hours: Math.min(23, Math.floor(s / 3600)),
         minutes: Math.floor((s % 3600) / 60), seconds: s % 60
       };
     }
@@ -281,88 +299,54 @@
     function tick() {
       var status = Site.hackathonStatus(site);
       onTick(status);
-      if (status.state !== 'counting' && timer) { clearInterval(timer); timer = null; }
+      var keepGoing = status.state === 'counting' || status.state === 'live';
+      if (!keepGoing && timer) { clearInterval(timer); timer = null; }
     }
     tick();
-    if (Site.hackathonStatus(site).state === 'counting') timer = setInterval(tick, everyMs || 1000);
+    var first = Site.hackathonStatus(site).state;
+    if (first === 'counting' || first === 'live') timer = setInterval(tick, everyMs || 1000);
     return function stop() { if (timer) clearInterval(timer); };
   };
 
   /* ======================= celebrations ======================= */
 
+  // One toast element lives in the page from the start, so screen readers notice when its text changes.
+  function toastRegion() {
+    var t = document.getElementById('site-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'site-toast';
+      t.className = 'toast';
+      t.setAttribute('role', 'status');
+      t.setAttribute('aria-live', 'polite');
+      t.hidden = true;
+      document.body.appendChild(t);
+    }
+    return t;
+  }
+  var toastTimer = null;
+
   Site.toast = function (message) {
-    var old = document.querySelector('.toast');
-    if (old) old.remove();
-    var t = document.createElement('div');
-    t.className = 'toast';
-    t.setAttribute('role', 'status');
-    t.textContent = message;
-    document.body.appendChild(t);
-    setTimeout(function () { t.remove(); }, 3200);
+    var t = toastRegion();
+    clearTimeout(toastTimer);
+    t.hidden = true;
+    t.textContent = '';
+    // a short pause between clearing and filling is what makes screen readers announce it
+    setTimeout(function () {
+      t.textContent = message;
+      t.hidden = false;
+      toastTimer = setTimeout(function () { t.hidden = true; t.textContent = ''; }, 4000);
+    }, 30);
   };
 
   // A burst of confetti from an element (or the middle of the screen).
   // With reduced motion on, it becomes a toast instead.
-  Site.confetti = function (fromEl) {
-    if (!Site.motionOK()) { Site.toast('🎉 See you Tuesday!'); return; }
-    var canvas = document.createElement('canvas');
-    canvas.className = 'confetti-canvas';
-    canvas.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(canvas);
-    var ctx = canvas.getContext('2d');
-    var dpr = window.devicePixelRatio || 1;
-    canvas.width = window.innerWidth * dpr;
-    canvas.height = window.innerHeight * dpr;
-    ctx.scale(dpr, dpr);
-
-    var ox = window.innerWidth / 2, oy = window.innerHeight * 0.5;
-    if (fromEl && fromEl.getBoundingClientRect) {
-      var r = fromEl.getBoundingClientRect();
-      ox = r.left + r.width / 2; oy = r.top + r.height / 2;
-    }
-    var pieces = [];
-    for (var i = 0; i < 150; i++) {
-      var angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.6;
-      var speed = 9 + Math.random() * 9;
-      pieces.push({
-        x: ox, y: oy, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
-        w: 6 + Math.random() * 6, h: 8 + Math.random() * 8,
-        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-        rot: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, round: i % 4 === 0
-      });
-    }
-    var start = null;
-    function frame(t) {
-      if (start === null) start = t;
-      var age = t - start;
-      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      ctx.globalAlpha = age > 1600 ? Math.max(0, 1 - (age - 1600) / 600) : 1;
-      pieces.forEach(function (p) {
-        p.vy += 0.38; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
-        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot); ctx.fillStyle = p.color;
-        if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, Math.PI * 2); ctx.fill(); }
-        else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
-      });
-      if (age < 2200) requestAnimationFrame(frame); else canvas.remove();
-    }
-    requestAnimationFrame(frame);
-  };
-
-  // Counts a number up inside an element (or just shows it under reduced motion).
-  Site.countUp = function (el, target, ms) {
-    target = Number(target) || 0;
-    if (!Site.motionOK() || target === 0) { el.textContent = target; return; }
-    var start = null;
-    function frame(t) {
-      if (start === null) start = t;
-      var k = Math.min(1, (t - start) / (ms || 600));
-      var eased = 1 - Math.pow(1 - k, 3);
-      el.textContent = Math.round(target * eased);
-      if (k < 1) requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  };
+  // Confetti and number count-ups live in js/celebrate.js (loaded after this file).
+  // If a page forgets that script, these fall back to a toast / plain numbers.
+  function celebrate(fromEl, quietMessage) {
+    if (Site.confetti) Site.confetti(fromEl, quietMessage);
+    else if (quietMessage) Site.toast(quietMessage);
+  }
 
   /* ======================= header, tab bar, footer ======================= */
   function navLinks(withIcons) {
@@ -381,7 +365,7 @@
     header.innerHTML =
       '<a class="skip-link" href="#main-content">Skip to content</a>' +
       '<div class="inner">' +
-        '<a class="brand" href="index.html"><img src="img/logo.svg" alt="" width="36" height="36">VibeCoding Club</a>' +
+        '<a class="brand" href="index.html" aria-label="VibeCoding Club home"><img src="img/logo.svg" alt="" width="36" height="36"><span class="brand-name">VibeCoding Club</span></a>' +
         '<nav class="top-nav" aria-label="Pages">' + navLinks(false) + '</nav>' +
         '<a class="btn header-join" data-join href="#">Join the club</a>' +
       '</div>';
@@ -419,12 +403,12 @@
     var joinUrl = Site.get(site, 'links.joinForm', '');
     Array.prototype.forEach.call(document.querySelectorAll('[data-join]'), function (btn) {
       setupLinkButton(btn, joinUrl, 'Join the club', 'Join the club (form coming soon)',
-        'The sign-up form is coming soon. Ask a club leader!');
+        'The sign-up form is coming soon. Ask a club leader!', '🎉 See you at the next meeting!');
     });
     var registerUrl = Site.get(site, 'links.hackathonForm', '');
     Array.prototype.forEach.call(document.querySelectorAll('[data-register]'), function (btn) {
       setupLinkButton(btn, registerUrl, 'Register your team', 'Registration opens soon',
-        'Registration is not open yet. Check back soon!');
+        'Registration is not open yet. Check back soon!', '🎮 See you at the hackathon!');
     });
     var leaders = (site.leaders || []).map(function (l) {
       return Site.esc(l.name) + (l.role ? ' · ' + Site.esc(l.role) : '');
@@ -433,19 +417,28 @@
     if (footerLeaders) footerLeaders.innerHTML = leaders;
   }
 
-  // A button that opens a link in a new tab and celebrates, or says "coming soon" if the link is empty.
-  function setupLinkButton(btn, url, readyText, soonText, soonMessage) {
-    if (btn.classList.contains('header-join')) { readyText = 'Join the club'; soonText = 'Join the club'; }
+  // A button that celebrates and then opens the link, or says "coming soon" if the link is empty.
+  function setupLinkButton(btn, url, readyText, soonText, soonMessage, quietMessage) {
+    var inHeader = btn.classList.contains('header-join');
+    if (inHeader) { readyText = 'Join the club'; soonText = 'Join the club'; }
     if (url) {
       btn.textContent = readyText;
       btn.setAttribute('href', url);
-      btn.setAttribute('target', '_blank');
+      btn.removeAttribute('target');
       btn.setAttribute('rel', 'noopener');
       btn.removeAttribute('aria-disabled');
       btn.removeAttribute('role');
-      btn.onclick = function () { Site.confetti(btn); };
+      btn.onclick = function (e) {
+        // Plain tap: celebrate for a moment, then go to the form in this tab.
+        // Cmd/Ctrl/Shift click or middle click: let the browser open a new tab as usual.
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        celebrate(btn, quietMessage);
+        setTimeout(function () { location.href = url; }, 800);
+      };
     } else {
       btn.textContent = soonText;
+      if (inHeader) btn.innerHTML = Site.esc(soonText) + '<span class="visually-hidden"> (form coming soon)</span>';
       btn.removeAttribute('href');
       btn.removeAttribute('target');
       btn.setAttribute('role', 'button');
@@ -454,7 +447,7 @@
       var soon = function (e) {
         if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return;
         e.preventDefault();
-        Site.confetti(btn);
+        if (Site.motionOK()) celebrate(btn);
         Site.toast(soonMessage);
       };
       btn.onclick = soon;
@@ -479,18 +472,19 @@
   // Site.ready resolves with site.json (or sensible defaults if it cannot load)
   // after the header and footer are drawn. Page scripts wait on it.
   Site.ready = new Promise(function (resolve) {
+    function apply(site) {
+      try { applySite(site); }
+      catch (e) { if (window.console) console.error('[site.json]', e); }
+      resolve(site);
+    }
     function start() {
-      drawHeader();
-      drawFooter();
-      Site.loadJSON('data/site.json').then(
-        function (site) { applySite(site); resolve(site); },
-        function (err) {
-          if (window.console) console.error('[site.json]', err);
-          Site.siteError = err;
-          applySite(DEFAULT_SITE);
-          resolve(DEFAULT_SITE);
-        }
-      );
+      try { drawHeader(); drawFooter(); toastRegion(); }
+      catch (e) { if (window.console) console.error('[layout]', e); }
+      Site.loadJSON('data/site.json').then(apply, function (err) {
+        if (window.console) console.error('[site.json]', err);
+        Site.siteError = err;
+        apply(DEFAULT_SITE);
+      });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
     else start();

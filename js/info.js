@@ -10,7 +10,7 @@
   Site.section('#leaders', 'data/site.json', function (site) {
     var leaders = site.leaders || [];
     if (!leaders.length) return '<p>Ask anyone in the room. We are all friendly.</p>';
-    return '<ul class="leader-list">' + leaders.map(function (person) {
+    return '<ul class="leader-list" role="list">' + leaders.map(function (person) {
       var role = person.role ? ' <span class="muted">· ' + Site.esc(person.role) + '</span>' : '';
       return '<li>' + Site.esc(person.name) + role + '</li>';
     }).join('') + '</ul>';
@@ -51,6 +51,6 @@
   Site.section('#resources', 'data/resources.json', function (data) {
     var list = (data && data.resources) || [];
     if (!list.length) return '<p>No links yet. Add the first one to <code>data/resources.json</code>!</p>';
-    return '<ul class="resource-list">' + list.map(resourceHTML).join('') + '</ul>';
+    return '<ul class="resource-list" role="list">' + list.map(resourceHTML).join('') + '</ul>';
   });
 })();

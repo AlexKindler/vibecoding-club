@@ -9,16 +9,6 @@
   // The class that colors a row's left edge (see the <style> block in calendar.html).
   var ROW_CLASS = { TALK: 'ev-talk', WORK: 'ev-work', SPECIAL: 'ev-special', HACKATHON: 'ev-hackathon', BREAK: 'ev-break' };
 
-  // '09:00' -> '9:00 AM', '12:30' -> '12:30 PM'. Anything else ('Lunch') comes back unchanged.
-  function niceTime(value) {
-    var m = /^(\d{1,2}):(\d{2})$/.exec(String(value || ''));
-    if (!m) return value || '';
-    var hours = Number(m[1]);
-    var suffix = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    if (hours === 0) hours = 12;
-    return hours + ':' + m[2] + ' ' + suffix;
-  }
 
   // 'Tue' and 22 for the compact date block.
   function datePieces(iso) {
@@ -44,7 +34,7 @@
     // BREAK weeks have no meeting, so no time or room line.
     var where = '';
     if (type !== 'BREAK') {
-      var time = niceTime(e.time || Site.get(site, 'meeting.time', 'Lunch'));
+      var time = Site.formatTime(e.time || Site.get(site, 'meeting.time', 'Lunch'));
       var room = e.room || Site.get(site, 'meeting.room', 'Room TBD');
       where = '<p class="ev-where muted">' + Site.esc(time) + ' · ' + Site.esc(room) + '</p>';
     }
@@ -106,9 +96,9 @@
     });
 
     if (past.length) {
-      html += '<details class="past"><summary>' +
-        '<span class="past-arrow" aria-hidden="true">▶</span>' +
-        '<h2>Earlier this year (' + past.length + ')</h2></summary>';
+      html += '<details class="past"><summary><h2>' +
+        '<span class="past-arrow" aria-hidden="true">▶</span> ' +
+        'Earlier this year (' + past.length + ')</h2></summary>';
       groupByMonth(past).forEach(function (group) {
         html += '<h3 class="cal-month">' + Site.esc(group.label) + '</h3>' +
           '<ol class="cal-list" role="list">' + group.events.map(function (e) {

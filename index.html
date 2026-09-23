@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>VibeCoding Club at Menlo School</title>
   <meta name="description" content="Build real apps and games with AI coding tools. No experience needed. Tuesdays at Menlo School.">
   <meta name="theme-color" content="#FFD53D">
@@ -22,7 +22,8 @@
       border: var(--border); border-radius: var(--radius); padding: 1rem 1.2rem;
       box-shadow: var(--shadow); transition: transform 0.12s ease;
     }
-    .banner-link:hover { color: #fff; transform: translateY(-2px); }
+    .banner-link:hover { color: #fff; }
+    @media (hover: hover) { .banner-link:hover { transform: translateY(-2px); } }
     .banner-link .eyebrow { color: #fff; width: 100%; margin: 0; }
     .banner-link strong { font-family: var(--font-display); font-size: 1.5rem; }
     .banner-link .banner-line { margin-left: auto; font-weight: 600; }
@@ -38,7 +39,7 @@
       padding: 0.6rem 0.9rem; box-shadow: var(--shadow-press);
     }
     .top3 .medal { font-size: 1.6rem; }
-    .top3 .name { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; flex: 1; }
+    .top3 .name { font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; flex: 1; min-width: 0; overflow-wrap: anywhere; }
     .top3 .pts { font-weight: 700; }
     .top3 li.rank-1 { background: var(--sun); }
     .top3 li.rank-2 { background: var(--silver); }
@@ -62,13 +63,13 @@
       <p class="pitch reveal reveal-delay-1" data-site="club.pitch">Build real apps and games with AI coding tools. No experience needed.</p>
       <a class="btn btn-big reveal reveal-delay-2" data-join href="#">Join the club</a>
       <p class="meta muted reveal reveal-delay-3">
-        Tuesdays · <span data-site="meeting.time">Lunch</span> · <span data-site="meeting.room">Room TBD</span> · Menlo School
+        <span data-site="meeting.day">Tuesdays</span> · <span data-site="meeting.time">Lunch</span> · <span data-site="meeting.room">Room TBD</span> · <span data-site="club.school">Menlo School</span>
       </p>
     </section>
 
     <section id="hackathon-banner" class="reveal reveal-delay-3" aria-label="Blooket Hackathon">
       <a class="banner-link" href="hackathon.html">
-        <span class="eyebrow">🎮 Blooket Hackathon</span>
+        <span class="eyebrow"><span aria-hidden="true">🎮</span> Blooket Hackathon</span>
         <strong>$1,000 prize</strong>
         <span class="banner-line">November 2026 · details soon</span>
       </a>
@@ -76,12 +77,12 @@
 
     <div class="home-grid">
       <section class="card next-up reveal reveal-delay-4" aria-labelledby="next-up-title">
-        <p class="eyebrow" id="next-up-title">Next up</p>
+        <h2 class="eyebrow" id="next-up-title">Next up</h2>
         <div id="next-up-body"><p class="muted">Loading the calendar…</p></div>
       </section>
 
       <section class="reveal reveal-delay-5" aria-labelledby="top3-title">
-        <p class="eyebrow" id="top3-title">Top of the scoreboard</p>
+        <h2 class="eyebrow" id="top3-title">Top of the scoreboard</h2>
         <div id="top3-body"><p class="muted">Loading the scoreboard…</p></div>
         <a class="btn btn-ghost" href="scoreboard.html">See the full scoreboard</a>
       </section>
@@ -91,6 +92,7 @@
   <footer id="site-footer"></footer>
 
   <script src="js/shared.js"></script>
+  <script src="js/celebrate.js"></script>
   <script src="js/home.js"></script>
 </body>
 </html>

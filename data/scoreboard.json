@@ -1,5 +1,5 @@
 {
-  "_help": "Names are first name + last initial ('Ava K.') or a handle ('pixelwiz'). Never full names, never emails. Never type a rank: the site sorts by points, and ties share a rank. Keep members alphabetical so two people's edits land on different lines. Badge colors: sun, tangerine, mint, coral, sky, grape. Every change to this file needs a club leader's approval. The four members below are famous computer scientists, not students: delete them before launch.",
+  "_help": "Names are first name + last initial ('Ava K.') or a handle ('pixelwiz'). Never full names, never emails. Never type a rank: the site sorts by points, and ties share a rank. When you change points, also set updated to today's date (YYYY-MM-DD). Keep members alphabetical so two people's edits land on different lines. Badge colors: sun, tangerine, mint, coral, sky, grape. Every change to this file needs a club leader's approval. The four members below are famous computer scientists, not students: delete them before launch.",
   "updated": "2026-09-22",
   "howToEarn": [
     { "category": "attend",    "what": "Come to a meeting",                    "points": 10 },

@@ -1,6 +1,6 @@
 # VibeCoding Club website
 
-The website for VibeCoding Club at Menlo School. We build it together, all year, and every member is a collaborator. It is plain HTML, CSS and JavaScript: no frameworks, no build step, nothing to install.
+The website for VibeCoding Club at Menlo School. We build it together, all year, and every member is a collaborator. It is plain HTML, CSS and JavaScript: no frameworks, no build step, nothing to install to preview it.
 
 Live site: https://alexkindler.github.io/vibecoding-club/
 
@@ -69,7 +69,8 @@ Open `data/events.json`. It looks like this:
 1. **Copy the line above the spot you want**, paste it below, and change the words. Copying a whole line keeps the commas and quotes right.
 2. `date` is `YYYY-MM-DD`. `type` is `TALK`, `WORK`, `SPECIAL`, or `BREAK` (a week with no meeting).
 3. Keep the list **in date order**. The checker will tell you if a line is out of place.
-4. Optional extras: `"time": "12:30"` or `"room": "Library"` if a meeting is somewhere unusual.
+4. Optional extras: `"time": "12:30"` or `"room": "Library"` if a meeting is somewhere unusual, and `"tbd": true` while a date is still a guess (the calendar shows "date TBD" and the home page skips it).
+5. Regular meetings are on Tuesdays. The checker warns if a TALK, WORK or BREAK date lands on another weekday. SPECIAL events can be any day.
 
 The hackathon is **not** in this file. Its date lives in `data/site.json` and shows up on the calendar automatically.
 
@@ -85,6 +86,7 @@ Open `data/scoreboard.json`. A member looks like this:
 
 - **Names are first name + last initial** (`Ava K.`) or a handle (`pixelwiz`). Never full names, never emails. This site is public.
 - Change `points` to the new total. Never type a rank: the site sorts by points and ties share a rank.
+- Change `updated` (near the top of the file) to today's date, written `YYYY-MM-DD`. The scoreboard shows it as "Last updated".
 - Keep members **alphabetical** so two people's edits land on different lines.
 - `badges` must use ids from the `badges` section of the same file.
 - The rules under `howToEarn` are what the "How to earn points" box shows. Change the words or points there, no code needed.
@@ -117,7 +119,11 @@ Run this from the `vibecoding-club` folder:
 node scripts/check-data.js
 ```
 
-It says `All 4 data files look good` or tells you the file, the line and what to fix ("extra comma before the closing bracket", "keep meetings in date order", "use first name + last initial"). The same check runs on GitHub for every pull request, so a red X means "read the message", not "you broke it".
+It says `All 4 data files look good` or tells you the file, the line and what to fix ("extra comma before the closing bracket", "keep meetings in date order", "use first name + last initial"). Lines that start with `WARN` are reminders (placeholders, empty links, odd weekdays) and never fail the check. Only `ERROR` lines turn it red.
+
+The same check runs on GitHub for every pull request, so a red X means "read the message", not "you broke it".
+
+Don't have `node`? Either install it from https://nodejs.org (pick the LTS version, click through the installer, then reopen Terminal), or skip this step: GitHub runs the exact same check on your pull request and shows the message under the red X.
 
 ---
 
@@ -147,7 +153,7 @@ Then click the **Compare & pull request** button GitHub shows you.
 **What happens next**
 
 - The `check-data` check runs in about 30 seconds. Green means the data is valid.
-- One other member (or a leader, for the scoreboard and site.json) clicks **Approve**.
+- One other member clicks **Approve**. A leader has to approve changes to `data/scoreboard.json`, `data/site.json`, anything in `scripts/` and anything in `.github/` (the rulebook).
 - Whoever approves clicks **Merge**. The live site updates within a minute or two. If it looks stale, wait a minute and hard-refresh (`Cmd-Shift-R`).
 
 **If GitHub says "This branch has conflicts"**
@@ -160,8 +166,8 @@ Someone else changed the same lines. Click **Resolve conflicts**, keep both peop
 
 Do these once, in order, on GitHub.com under **Settings**:
 
-1. **Pages**: Build and deployment, Source: **Deploy from a branch**, Branch: **main**, Folder: **/ (root)**, Save. Then tick **Enforce HTTPS**. The site appears at the URL shown within a couple of minutes.
-2. **Collaborators**: add every member with **Write** access.
+1. **Pages**: Build and deployment, Source: **Deploy from a branch**, Branch: **main**, Folder: **/ (root)**, Save. The site appears at the URL shown within a couple of minutes. (Enforce HTTPS is already on for github.io addresses; you only tick it yourself if you add a custom domain later.)
+2. **Collaborators**: click **Add people** and enter each member's GitHub handle. On a personal repo they get push (write) access automatically, which is what CODEOWNERS and the checker need.
 3. Open one small pull request (any change) so the `check-data` check exists, then:
 4. **Branches**: Add classic branch protection rule for `main`:
    - **Require a pull request before merging**
