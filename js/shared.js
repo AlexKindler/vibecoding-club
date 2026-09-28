@@ -32,7 +32,7 @@
   // Used when data/site.json cannot be loaded, so the page still makes sense.
   var DEFAULT_SITE = {
     club: { name: 'VibeCoding Club', school: 'Menlo School', pitch: 'Build real apps and games with AI coding tools. No experience needed.', repo: 'https://github.com/AlexKindler/vibecoding-club' },
-    meeting: { day: 'Tuesdays', time: 'Lunch', room: 'Room TBD' },
+    meeting: { day: 'Tuesdays', time: 'Lunch', room: 'A218' },
     leaders: [],
     links: { joinForm: '', schoolClubsCalendar: '' }
   };
@@ -47,7 +47,7 @@
       });
   };
 
-  // Site.get(site, 'meeting.room', 'Room TBD')
+  // Site.get(site, 'meeting.room', 'A218')
   Site.get = function (obj, path, fallback) {
     var value = obj;
     var keys = String(path).split('.');

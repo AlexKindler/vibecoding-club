@@ -11,7 +11,7 @@
     }
     var rel = Site.relativeDay(next.date);
     var time = Site.formatTime(next.time || Site.get(site, 'meeting.time', 'Lunch'));
-    var room = next.room || Site.get(site, 'meeting.room', 'Room TBD');
+    var room = next.room || Site.get(site, 'meeting.room', 'A218');
     return '' +
       '<div class="chips">' + Site.chip(next.type) +
         (rel ? '<span class="chip chip-neon">' + Site.esc(rel) + '</span>' : '') +

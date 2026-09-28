@@ -60,7 +60,7 @@ function warn(file, line, message) { warningCount += 1; report('warning', file, 
 function lineOfIndex(text, index) { return text.slice(0, index).split('\n').length; }
 
 // A locator remembers where the last match was, so repeated values (four "Work Day"
-// titles, two "Room TBD"s) resolve to the entry being checked, as long as entries
+// titles, a repeated room name) resolve to the entry being checked, as long as entries
 // are checked in file order.
 function makeLocator(text) { return { text, from: 0 }; }
 
