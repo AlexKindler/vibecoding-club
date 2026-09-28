@@ -34,7 +34,7 @@
     var where = '';
     if (type !== 'BREAK') {
       var time = Site.formatTime(e.time || Site.get(site, 'meeting.time', 'Lunch'));
-      var room = e.room || Site.get(site, 'meeting.room', 'Room TBD');
+      var room = e.room || Site.get(site, 'meeting.room', 'A218');
       where = '<p class="ev-where muted">' + Site.esc(time) + ' · ' + Site.esc(room) + '</p>';
     }
 
